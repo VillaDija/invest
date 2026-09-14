@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nûr Retreats — Villa Dija Investment Monitor</title>
+<style>
+:root{
+  --ink:#2B2523; --dark:#33302E; --dark2:#4A443F; --terra:#B85042; --terraL:#E2907B;
+  --sand:#EFEDE3; --sand2:#E2DFD0; --sage:#7D9471; --slate:#5B6670; --muted:#7A736E;
+  --green:#5C7F52; --red:#A63A2E; --line:#DDD8CC;
+  --serif:Cambria,"Bookman Old Style",Georgia,serif;
+  --sans:Calibri,"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:var(--sans);color:var(--ink);background:#fff;font-size:15px;line-height:1.45}
+.wrap{display:grid;grid-template-columns:330px 1fr;min-height:100vh}
+aside{background:var(--dark);color:var(--sand);padding:22px 20px 60px;position:sticky;top:0;height:100vh;overflow-y:auto}
+aside h1{font-family:var(--serif);font-size:24px;margin:0;color:#F3EBDD;font-weight:700;line-height:1.1;letter-spacing:.3px}
+.logo{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.logo svg{width:46px;height:46px;flex:0 0 auto}
+.logo .sub{margin:3px 0 0;font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:#C9B58F}
+.lang{flex:0 0 auto;margin-left:auto;background:transparent;border:1px solid #5A534D;color:var(--sand2);border-radius:4px;padding:2px 8px;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer}
+.lang:hover{background:#4A443F}
+aside .sub{font-size:11.5px;color:var(--muted)}
+aside .grp{margin:16px 0 6px;font-size:10px;letter-spacing:1.6px;text-transform:uppercase;color:var(--terraL);font-weight:700;border-top:1px solid #4A443F;padding-top:12px}
+.sync{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sand2)}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--sage)}
+.dot.sample{background:#C9A24A}.dot.syncing{background:#C9A24A;animation:pulse 1s infinite}.dot.stale{background:var(--terra)}
+@keyframes pulse{50%{opacity:.3}}
+aside input[type=text],aside select{width:100%;background:#2A2624;border:1px solid #5A534D;color:var(--sand);border-radius:5px;padding:7px 9px;font-family:var(--sans);font-size:12px;margin-top:4px}
+.btnrow{display:flex;gap:8px;margin-top:12px}
+button{flex:1;background:var(--terra);color:#fff;border:0;border-radius:5px;padding:9px 10px;font-family:var(--sans);font-size:12.5px;font-weight:700;cursor:pointer}
+button.ghost{background:transparent;border:1px solid #5A534D;color:var(--sand2)}
+button:hover{opacity:.9}
+.nav button{display:block;width:100%;text-align:left;background:transparent;border:0;color:var(--sand2);padding:8px 10px;border-radius:5px;font-weight:600;margin:2px 0}
+.nav button.on{background:#4A443F;color:#fff}
+.nav button:hover{background:#3F3A36}
+main{padding:26px 34px 70px;max-width:1180px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+h2{font-family:var(--serif);font-size:25px;margin:0 0 2px;font-weight:700}
+.lede{color:var(--slate);font-size:14px;margin:0 0 20px;max-width:820px}
+section{margin:0 0 26px}
+section > h3{font-size:10.5px;letter-spacing:1.6px;text-transform:uppercase;color:var(--terra);font-weight:700;margin:0 0 9px}
+.tab{display:none}.tab.on{display:block}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kpi{background:var(--sand);border-radius:8px;padding:14px 16px}
+.kpi .v{font-family:var(--serif);font-size:29px;font-weight:700;line-height:1.05;white-space:nowrap}
+.kpi .l{font-size:12.5px;font-weight:700;margin-top:5px}
+.kpi .s{font-size:10.5px;color:var(--muted);margin-top:2px}
+.kpi.dk{background:var(--dark)} .kpi.dk .v{color:var(--terraL)} .kpi.dk .l{color:#fff} .kpi.dk .s{color:var(--sand2)}
+.strip{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:12px}
+.chip{background:var(--sand2);border-radius:6px;padding:9px 11px}
+.chip .v{font-family:var(--serif);font-size:17px;font-weight:700;white-space:nowrap}
+.chip .l{font-size:10.5px;color:var(--slate)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.cols3{display:grid;grid-template-columns:1.15fr 1fr;gap:22px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{font-size:11px;color:var(--muted);text-align:left;padding:4px 2px;border-bottom:1px solid var(--line);font-weight:700}
+th.n{text-align:right}
+td{padding:6px 2px;border-bottom:1px solid var(--line)}
+td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.tot td{font-weight:700;border-top:1.5px solid var(--ink);border-bottom:0;padding-top:8px}
+tr.tot td.n{font-family:var(--serif);font-size:16px}
+tr.sec td{font-weight:700;background:var(--sand)}
+tr.lot td:first-child{padding-left:18px}
+tr.line td:first-child{padding-left:36px;color:var(--slate);font-size:12.5px}
+.note{font-size:11.5px;color:var(--muted);font-style:italic;margin-top:8px;line-height:1.4}
+.callout{background:var(--dark);color:var(--sand2);border-radius:8px;padding:14px 16px;font-size:12.5px;line-height:1.5}
+.callout b{color:var(--terraL)}
+.hm{border-collapse:separate;border-spacing:3px;font-size:11.5px;width:100%}
+.hm th{font-size:10.5px;color:var(--muted);font-weight:700;padding:2px;border:0;text-align:center}
+.hm td{border:0;text-align:center;padding:8px 2px;border-radius:4px;font-variant-numeric:tabular-nums}
+.hm td.rowh{background:var(--sand2);font-weight:700;color:var(--ink);text-align:left;padding-left:8px;white-space:nowrap}
+.bars .row{display:grid;grid-template-columns:210px 1fr 90px;align-items:center;gap:10px;margin:7px 0;font-size:13px}
+.bars .bar{height:19px;border-radius:3px}
+.bars .val{text-align:right;font-family:var(--serif);font-weight:700;font-size:15px;font-variant-numeric:tabular-nums}
+svg{display:block;width:100%;height:auto;font-family:var(--sans)}
+.foot{border-top:1px solid var(--line);padding-top:14px;font-size:11.5px;color:var(--muted);line-height:1.55}
+.badge{display:inline-block;background:var(--sage);color:#fff;font-size:10px;font-weight:700;letter-spacing:.5px;padding:3px 8px;border-radius:10px;vertical-align:middle;margin-left:8px}
+.badge.amber{background:#C9A24A}.badge.red{background:var(--red)}
+.editable{position:relative;border-radius:6px;padding:2px 4px;white-space:pre-wrap}
+body.editing .editable{outline:1.5px dashed var(--terra);outline-offset:3px;background:#FBF6F0}
+.editbar{display:none;position:fixed;bottom:18px;right:24px;background:var(--dark);color:#fff;border-radius:8px;padding:10px 12px;gap:8px;box-shadow:0 6px 24px rgba(0,0,0,.25);z-index:20}
+body.editing .editbar{display:flex}
+.modal{display:none;position:fixed;inset:0;background:rgba(43,37,35,.55);z-index:30;align-items:center;justify-content:center}
+.modal.on{display:flex}
+.modal .box{background:#fff;border-radius:10px;padding:22px 24px;width:360px;font-size:13.5px}
+.modal h4{font-family:var(--serif);margin:0 0 6px;font-size:19px}
+.modal input{width:100%;padding:9px;border:1px solid var(--line);border-radius:5px;font-size:14px;margin:10px 0}
+.err{color:var(--red);font-size:12px;min-height:16px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.filters input,.filters select{padding:7px 9px;border:1px solid var(--line);border-radius:5px;font-family:var(--sans);font-size:12.5px}
+.tx{max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.tx table{font-size:12.5px}.tx th{position:sticky;top:0;background:#fff}
+.small{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.small .t{font-size:12px;font-weight:700;margin-bottom:2px}
+.banner{background:var(--sand);border-left:4px solid var(--terra);padding:10px 14px;border-radius:6px;font-size:12.5px;margin-bottom:16px}
+.printhead{display:none}
+@media print{
+  aside,.editbar,.modal,.filters{display:none!important}
+  .wrap{grid-template-columns:1fr} main{max-width:none;padding:0}
+  .tab{display:block!important;page-break-after:always}
+  .kpi,.chip,section{break-inside:avoid}
+  .printhead{display:block;font-size:11px;color:var(--muted);margin-bottom:10px}
+  .tx{max-height:none;overflow:visible;border:0}
+}
+@media (max-width:1000px){.wrap{grid-template-columns:1fr}aside{position:static;height:auto}
+  .kpis{grid-template-columns:repeat(2,1fr)}.cols,.cols3{grid-template-columns:1fr}.strip{grid-template-columns:repeat(3,1fr)}.small{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<aside>
+  <div class="logo">
+    <svg viewBox="0 0 64 64" width="46" height="46" aria-hidden="true">
+      <g stroke="#C9924E" stroke-width="3.2" stroke-linecap="round">
+        <line x1="32" y1="4" x2="32" y2="13"/><line x1="32" y1="51" x2="32" y2="60"/><line x1="4" y1="32" x2="13" y2="32"/><line x1="51" y1="32" x2="60" y2="32"/>
+        <line x1="12.2" y1="12.2" x2="18.5" y2="18.5"/><line x1="45.5" y1="45.5" x2="51.8" y2="51.8"/><line x1="12.2" y1="51.8" x2="18.5" y2="45.5"/><line x1="45.5" y1="18.5" x2="51.8" y2="12.2"/>
+      </g>
+      <circle cx="32" cy="32" r="13.5" fill="#E4B96A"/>
+    </svg>
+    <div><h1>Nûr Retreats</h1><div class="sub" data-i18n>Investment Monitor · Villa Dija · Bouznika · MAD</div></div>
+  </div>
+  <div class="sync"><span class="dot sample" id="dot"></span><span id="syncTxt">Snapshot · 4 Sep 2026 · 622 lines</span>
+    <button class="lang" id="langBtn" onclick="toggleLang()" title="Français / English">FR</button></div>
+
+  <div class="grp">Data source</div>
+  <label style="font-size:11.5px;color:var(--sand2)">Apps Script endpoint (empty = embedded snapshot)</label>
+  <input type="text" id="endpoint" value="https://script.google.com/macros/s/AKfycbxD8vmY9jRQYKW9lyMayAm4mBss4rBBYjl_zhhGTOrwq8I4oftZmjLfq1PsiFskr4Y/exec" placeholder="https://script.google.com/macros/s/…/exec">
+  <div class="btnrow"><button onclick="sync()">Sync now</button><button class="ghost" onclick="toggleEdit()" id="editBtn">Edit 🔒</button></div>
+  <div class="btnrow"><button class="ghost" onclick="window.print()">Export / Print</button><button class="ghost" onclick="exportCSV()">CSV</button></div>
+  <div class="btnrow"><button class="ghost" onclick="exportJSON()">JSON</button><button class="ghost" onclick="copySnapshot()">Copy KPIs</button></div>
+
+  <div class="grp">View</div>
+  <div class="nav" id="nav"></div>
+
+  <div class="grp">Filters</div>
+  <label style="font-size:11.5px;color:var(--sand2)">Period</label>
+  <select id="fYear" onchange="render()"><option value="all">All time (Jan 2022 → Aug 2026)</option></select>
+  <label style="font-size:11.5px;color:var(--sand2);display:block;margin-top:8px">Budget section</label>
+  <select id="fSec" onchange="render()"><option value="all">All sections</option></select>
+
+  <div class="grp">Reading guide</div>
+  <div style="font-size:11.5px;color:var(--sand2);line-height:1.5">Terracotta = spent · Charcoal = budget or plan · Sage = under budget / inflow · Red = overrun. Budget = Foncier + construction + imprévus (Dhs 10.0m); financing sits outside it.</div>
+</aside>
+
+<main>
+  <div class="printhead">Nûr Retreats · Villa Dija — Investment Monitor · printed <span id="printDate"></span> · <span id="printSrc"></span></div>
+  <div class="top">
+    <div><h2>Investment monitor<span class="badge" id="chk">reconciles to the sheets</span></h2>
+    <p class="lede">6-suite luxury wellness retreat at Bahia Golf Beach Resort. Every figure below is recomputed from the bank log (snapshot of 4 Sep 2026) and the approved budget; the analyst commentary is the only hand-written text.</p></div>
+  </div>
+  <div class="banner" id="banner" style="display:none"></div>
+
+  <!-- OVERVIEW -->
+  <div class="tab on" id="tab-overview">
+    <section><h3>Headline</h3><div class="kpis" id="kpis"></div><div class="strip" id="strip"></div></section>
+    <section><h3>Budget vs spent, by section — are we on budget?</h3><div id="bullet"></div>
+      <div class="note">Bar = spent to date · tick = approved budget · shaded band = 90 % to 110 % of budget. Red bar and "+x % over" = overrun. The IMPREVUS bar shows the overruns of the other sections against the contingency.</div></section>
+    <section><h3>Cumulative construction spend against a straight-line plan (Dhs million, excl. Foncier)</h3><div id="scurve"></div><div class="note" id="scNote"></div></section>
+    <section class="cols3">
+      <div><h3>Analyst commentary</h3><div class="callout"><div class="editable" data-note="commentary" id="n_commentary"></div></div></div>
+      <div><h3>Phase status &amp; next steps</h3><div class="editable" data-note="phaseStatus" id="n_phaseStatus" style="font-size:13.5px"></div>
+        <div class="note">Committed not yet paid (Dhs): <span class="editable" data-note="committedNotPaid" id="n_committedNotPaid" style="font-weight:700;color:var(--ink)"></span> · Planned completion: <span class="editable" data-note="plannedEnd" id="n_plannedEnd" style="font-weight:700;color:var(--ink)"></span></div></div>
+    </section>
+  </div>
+
+  <!-- BUDGET -->
+  <div class="tab" id="tab-budget">
+    <section><h3>Approved budget treemap — tile size = budget, colour = share consumed</h3><div id="treemap"></div>
+      <div class="note">Sand = little spent yet · deep terracotta = fully consumed · red outline = overrun. Click a tile to filter the table below.</div></section>
+    <section><h3>Budget vs actual detail</h3><table id="bva"></table></section>
+    <section><h3>To classify</h3><div id="toclass" class="note"></div></section>
+  </div>
+
+  <!-- CASH -->
+  <div class="tab" id="tab-cash">
+    <section><h3>Where the money came from and where it went (Dhs million)</h3><div id="sankey"></div>
+      <div class="note">Left: net funding drawn (CCA associés and loans, incl. the 2022 off-bank KEF INVEST loan that settled the land). Right: uses by budget section, other assets, lines still to classify and operating charges. The balancing item closes sources to uses.</div></section>
+    <section><h3>Monthly inflows and outflows (Dhs million)</h3><div id="flows"></div></section>
+    <section class="cols">
+      <div><h3>Top counterparties by net inflow — who funded the project</h3><div class="bars" id="cptyIn"></div>
+        <div class="note">Net = inflows received − repayments made to the same counterparty, all bank lines (financing and other credits). Only net providers of funds are listed; the 2022 off-bank KEF INVEST loan that settled the land is included.</div></div>
+      <div><h3>Top counterparties by outflow — where the money went</h3><div class="bars" id="cpty"></div>
+        <div class="note">Gross payments, capex and other-asset lines only (bank commissions and financing repayments excluded).</div></div>
+    </section>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="tab" id="tab-timeline">
+    <section><h3>Spend heatmap — quarter × section (Dhs thousand)</h3><table class="hm" id="heat"></table></section>
+    <section><h3>Small multiples — monthly spend per section, shared scale</h3><div class="small" id="smalls"></div></section>
+    <section><h3>Phase markers</h3><div class="editable" data-note="phaseMarkers" id="n_phaseMarkers" style="font-size:13.5px"></div></section>
+  </div>
+
+  <!-- TRANSACTIONS -->
+  <div class="tab" id="tab-tx">
+    <section><h3>Transactions</h3>
+      <div class="filters"><input type="text" id="q" placeholder="Search designation, counterparty…" oninput="renderTx()">
+        <select id="fCat" onchange="renderTx()"><option value="all">All categories</option><option>Immobilisation</option><option>Financement</option><option>Charge</option></select></div>
+      <div class="tx"><table id="txt"></table></div>
+      <div class="note" id="txNote"></div></section>
+  </div>
+
+  <div class="foot"><b>Basis.</b> Construction budget from <i>vBahia_STRAT_BP › TDB_Synthèse</i>; actuals from <i>vDija_DAF_CdG_Trésorerie › Transactions</i>, mapped by OPERATION CATEGORY 3. Foncier is part of the approved budget (settled off-bank); financing flows and bank charges are reported outside the budget variance.<br><br>
+  <b>Data.</b> Without an endpoint this file runs on the <b>embedded snapshot of the Transactions sheet</b> taken on 4 September 2026 (622 lines, Jan 2022 → 14 Aug 2026: individual lines from January 2026, monthly aggregates per category before that) and the TDB_Synthèse budget of the same day. Paste the Apps Script endpoint (see README) to switch to live data with a 5-minute refresh. Snapshot-mode editor password: <code>vdija2026</code> — change it before sharing (README §3).<br><br><b>Limitations.</b> Management information built from the bank log and the budget sheet as maintained by KEF; not audited accounts. Amounts in MAD, VAT as booked.</div>
+</main>
+</div>
+
+<div class="editbar"><span style="font-size:12.5px;align-self:center">Editing — click any dashed block</span><button onclick="saveNotes()">Save</button><button class="ghost" onclick="cancelEdit()">Cancel</button></div>
+<div class="modal" id="modal"><div class="box"><h4>Unlock editing</h4><div>Enter the editor password to modify the narrative blocks.</div>
+  <input type="password" id="pw" placeholder="Password" onkeydown="if(event.key==='Enter')checkPw()"><div class="err" id="pwErr"></div>
+  <div class="btnrow"><button onclick="checkPw()">Unlock</button><button class="ghost" onclick="closeModal()">Cancel</button></div></div></div>
+
+<script>
+
+/* ================= I18N (EN → FR) ================= */
+const FR={
+"Investment Monitor · Villa Dija · Bouznika · MAD":"Suivi de l'investissement · Villa Dija · Bouznika · MAD",
+"Data source":"Source des données","Apps Script endpoint (empty = embedded snapshot)":"Point d'accès Apps Script (vide = instantané intégré)",
+"Sync now":"Synchroniser","Edit 🔒":"Modifier 🔒","Editing 🔓":"Édition 🔓","Export / Print":"Exporter / Imprimer","CSV":"CSV","JSON":"JSON","Copy KPIs":"Copier les KPI",
+"View":"Vues","Filters":"Filtres","Period":"Période","All time (Jan 2022 → Aug 2026)":"Toute la période (janv. 2022 → août 2026)","Budget section":"Section budgétaire","All sections":"Toutes les sections",
+"Reading guide":"Guide de lecture",
+"Terracotta = spent · Charcoal = budget or plan · Sage = under budget / inflow · Red = overrun. Budget = Foncier + construction + imprévus (Dhs 10.0m); financing sits outside it.":"Terracotta = dépensé · Anthracite = budget ou plan · Sauge = sous budget / encaissement · Rouge = dépassement. Budget = Foncier + construction + imprévus (10,0 MDhs) ; le financement est hors budget.",
+"Investment monitor":"Suivi de l'investissement","reconciles to the sheets":"concorde avec les feuilles","budget total differs from sheet":"le total du budget diffère de la feuille",
+"6-suite luxury wellness retreat at Bahia Golf Beach Resort. Every figure below is recomputed from the bank log (snapshot of 4 Sep 2026) and the approved budget; the analyst commentary is the only hand-written text.":"Retraite de bien-être de luxe de 6 suites au Bahia Golf Beach Resort. Chaque chiffre ci-dessous est recalculé à partir du journal bancaire (instantané du 4 sept. 2026) et du budget approuvé ; le commentaire de l'analyste est le seul texte rédigé à la main.",
+"Headline":"Synthèse","Budget vs spent, by section — are we on budget?":"Budget vs dépensé, par section — sommes-nous dans le budget ?",
+"Bar = spent to date · tick = approved budget · shaded band = 90 % to 110 % of budget. Red bar and \"+x % over\" = overrun. The IMPREVUS bar shows the overruns of the other sections against the contingency.":"Barre = dépensé à date · trait = budget approuvé · bande grisée = 90 % à 110 % du budget. Barre rouge et « +x % over » = dépassement. La barre IMPREVUS montre les dépassements des autres sections face à la provision.",
+"Cumulative construction spend against a straight-line plan (Dhs million, excl. Foncier)":"Dépenses de construction cumulées face à un plan linéaire (MDhs, hors Foncier)",
+"Analyst commentary":"Commentaire de l'analyste","Phase status & next steps":"Avancement & prochaines étapes","Committed not yet paid (Dhs):":"Engagé non encore payé (Dhs) :","· Planned completion:":"· Achèvement prévu :",
+"Approved budget treemap — tile size = budget, colour = share consumed":"Treemap du budget approuvé — taille = budget, couleur = part consommée",
+"Sand = little spent yet · deep terracotta = fully consumed · red outline = overrun. Click a tile to filter the table below.":"Sable = peu dépensé · terracotta foncé = entièrement consommé · contour rouge = dépassement. Cliquez sur une tuile pour filtrer le tableau.",
+"Budget vs actual detail":"Détail budget vs réalisé","To classify":"À classer",
+"Where the money came from and where it went (Dhs million)":"D'où vient l'argent et où il est allé (MDhs)",
+"Left: net funding drawn (CCA associés and loans, incl. the 2022 off-bank KEF INVEST loan that settled the land). Right: uses by budget section, other assets, lines still to classify and operating charges. The balancing item closes sources to uses.":"À gauche : financement net tiré (CCA associés et prêts, y compris le prêt KEF INVEST hors banque de 2022 ayant réglé le foncier). À droite : emplois par section budgétaire, autres actifs, lignes à classer et charges d'exploitation. Le poste d'équilibre boucle les ressources et les emplois.",
+"Monthly inflows and outflows (Dhs million)":"Encaissements et décaissements mensuels (MDhs)",
+"Top counterparties by net inflow — who funded the project":"Principales contreparties par encaissement net — qui a financé le projet",
+"Net = inflows received − repayments made to the same counterparty, all bank lines (financing and other credits). Only net providers of funds are listed; the 2022 off-bank KEF INVEST loan that settled the land is included.":"Net = encaissements reçus − remboursements versés à la même contrepartie, toutes lignes bancaires (financement et autres crédits). Seuls les apporteurs nets de fonds sont listés ; le prêt KEF INVEST hors banque de 2022 ayant réglé le foncier est inclus.",
+"Top counterparties by outflow — where the money went":"Principales contreparties par décaissement — où est allé l'argent",
+"Gross payments, capex and other-asset lines only (bank commissions and financing repayments excluded).":"Paiements bruts, lignes d'investissement et autres actifs uniquement (commissions bancaires et remboursements de financement exclus).",
+"Spend heatmap — quarter × section (Dhs thousand)":"Carte de chaleur des dépenses — trimestre × section (kDhs)","Small multiples — monthly spend per section, shared scale":"Petits multiples — dépenses mensuelles par section, échelle commune","Phase markers":"Jalons",
+"Transactions":"Transactions","All categories":"Toutes catégories","Search designation, counterparty…":"Rechercher un libellé, une contrepartie…",
+"Basis.":"Base.","Construction budget from":"Budget de construction issu de","; actuals from":" ; réalisé issu de",
+", mapped by OPERATION CATEGORY 3. Foncier is part of the approved budget (settled off-bank); financing flows and bank charges are reported outside the budget variance.":", rapproché par OPERATION CATEGORY 3. Le foncier fait partie du budget approuvé (réglé hors banque) ; les flux de financement et frais bancaires sont présentés hors écart budgétaire.",
+"Data.":"Données.","Without an endpoint this file runs on the":"Sans point d'accès, ce fichier fonctionne sur l'","embedded snapshot of the Transactions sheet":"instantané intégré de la feuille Transactions",
+"taken on 4 September 2026 (622 lines, Jan 2022 → 14 Aug 2026: individual lines from January 2026, monthly aggregates per category before that) and the TDB_Synthèse budget of the same day. Paste the Apps Script endpoint (see README) to switch to live data with a 5-minute refresh. Snapshot-mode editor password:":"pris le 4 septembre 2026 (622 lignes, janv. 2022 → 14 août 2026 : lignes individuelles depuis janvier 2026, agrégats mensuels par catégorie avant) et le budget TDB_Synthèse du même jour. Collez le point d'accès Apps Script (voir README) pour passer en données réelles avec rafraîchissement toutes les 5 minutes. Mot de passe d'édition en mode instantané :",
+"— change it before sharing (README §3).":"— à changer avant tout partage (README §3).","Limitations.":"Limites.",
+"Management information built from the bank log and the budget sheet as maintained by KEF; not audited accounts. Amounts in MAD, VAT as booked.":"Information de gestion construite à partir du journal bancaire et de la feuille budget tenus par KEF ; il ne s'agit pas de comptes audités. Montants en MAD, TVA telle que comptabilisée.",
+"Editing — click any dashed block":"Édition — cliquez sur un bloc en pointillés","Save":"Enregistrer","Cancel":"Annuler","Unlock editing":"Déverrouiller l'édition","Enter the editor password to modify the narrative blocks.":"Saisissez le mot de passe pour modifier les blocs de texte.","Unlock":"Déverrouiller","Password":"Mot de passe",
+"Overview":"Vue d'ensemble","Budget vs actual":"Budget vs réalisé","Cash & funding":"Trésorerie & financement","Timeline":"Chronologie",
+"approved budget":"budget approuvé","spent to date":"dépensé à date","remaining":"restant","overrun":"dépassement","forecast at completion":"prévision à l'achèvement",
+"land (Foncier)":"foncier","construction capex":"investissement construction","operating & bank charges":"charges d'exploitation & bancaires","funding drawn (net)":"financement tiré (net)","to classify":"à classer","other assets (5.x)":"autres actifs (5.x)",
+"Foncier ":"Foncier ","m · construction ":"m · construction ","m · imprévus ":"m · imprévus ",
+" of budget · construction ":" du budget · construction "," · overruns ":" · dépassements ","k vs ":"k vs ","k imprévus":"k d'imprévus",
+"budget exceeded · burn ":"budget dépassé · rythme ","k / month over the last 6 months":"k / mois sur les 6 derniers mois"," months at current burn (":" mois au rythme actuel (","k / month)":"k / mois)",
+" vs budget, incl. ":" vs budget, dont ","k committed":"k engagés",
+"· absorbs overruns":"· absorbe les dépassements","% over":"% dépassé"," spent":" dépensé","construction budget ":"budget construction ",
+"Section / lot / line ":"Section / lot / ligne ","· show all":"· tout afficher","Budget":"Budget","Spent":"Dépensé","Remaining":"Restant","%":"%","Total":"Total",
+" — consumed by overruns of the other sections":" — consommé par les dépassements des autres sections"," (pro-rata)":" (prorata)","Non alloué à un lot (col O vide ou non reconnue)":"Non alloué à un lot (col. O vide ou non reconnue)",
+"CCA associés (9.1)":"CCA associés (9.1)","Prêts société (9.2)":"Prêts société (9.2)","Other assets (5.x)":"Autres actifs (5.x)","To classify":"À classer","Operating & bank":"Exploitation & banque","Cash on hand":"Trésorerie disponible","Balancing item":"Poste d'équilibre",
+"■ inflow":"■ encaissements","■ outflow":"■ décaissements","Net funding, top ":"Financement net, top ",
+"Date":"Date","Designation":"Libellé","Category":"Catégorie","Counterparty":"Contrepartie","Inflow":"Encaissement","Outflow":"Décaissement","unclassified":"non classé","Total (":"Total ("," lines)":" lignes)",
+"Showing the first 400 of ":"Affichage des 400 premières lignes sur ","; totals cover all filtered lines.":" ; les totaux couvrent toutes les lignes filtrées.",
+"Nothing to classify — every bank line is mapped.":"Rien à classer — chaque ligne bancaire est rapprochée."," net across ":" nets sur "," lines":" lignes",
+" without a usable OPERATION CATEGORY 3 (blank, \"?\" or \"Divers\" — the three \"Divers\" lines to MESS alone total Dhs 449,899 and are probably capex).":" sans OPERATION CATEGORY 3 exploitable (vide, « ? » ou « Divers » — les trois lignes « Divers » vers MESS totalisent à elles seules 449 899 Dhs et relèvent probablement de l'investissement).",
+"Syncing…":"Synchronisation…","Live · ":"En direct · ","Stale · cached ":"Obsolète · cache du ","Endpoint unreachable · showing embedded snapshot":"Point d'accès injoignable · instantané intégré affiché","Snapshot · 4 Sep 2026 · 622 lines":"Instantané · 4 sept. 2026 · 622 lignes",
+"Approved budget changed: ":"Budget approuvé modifié : ","KPI snapshot copied to the clipboard.":"Synthèse des KPI copiée dans le presse-papiers.",
+"Wrong password":"Mot de passe incorrect"," — locked for 60 s":" — verrouillé 60 s","Locked — try again in ":"Verrouillé — réessayez dans ",
+"Σ sections ":"Σ sections "," · cell M2 reads ":" · la cellule M2 indique "," (formula omits 4c and 5)":" (la formule omet 4c et 5)",
+"snapshot of the Transactions sheet, 4 Sep 2026":"instantané de la feuille Transactions, 4 sept. 2026","live · ":"en direct · ",
+"Terracotta = cumulative actual (":"Terracotta = réalisé cumulé (","m). Dashed = straight-line plan to ":"m). Pointillés = plan linéaire jusqu'à ",", which would be at ":", qui serait à ","m today — actual is ":"m aujourd'hui — le réalisé est ","ahead of":"en avance sur","behind":"en retard sur"," the line by ":" la droite de ","m. Dots mark the three heaviest months.":"m. Les points marquent les trois mois les plus lourds.",
+" plan":" plan","Nûr Retreats · Villa Dija — Investment Monitor · printed":"Nûr Retreats · Villa Dija — Suivi de l'investissement · imprimé le"
+};
+let LANG="en";try{LANG=localStorage.getItem("vdija.lang")||"en"}catch(e){}
+const T=s=>LANG==="fr"?(FR[s]!==undefined?FR[s]:s):s;
+const I18N_NODES=[];
+function collectI18n(){const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{acceptNode:n=>{const p=n.parentElement;if(!p||["SCRIPT","STYLE","INPUT","TEXTAREA"].includes(p.tagName)||p.closest(".editable")||p.closest("#nav")||p.closest("#syncTxt")||p.closest("#chk")||p.id==="printDate"||p.id==="printSrc")return NodeFilter.FILTER_REJECT;return n.nodeValue.trim()?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT}});
+  let n;while((n=walker.nextNode())){const raw=n.nodeValue;const m=raw.match(/^(\s*)([\s\S]*?)(\s*)$/);I18N_NODES.push([n,m[1],m[2],m[3]])}
+  document.querySelectorAll("[placeholder]").forEach(el=>I18N_NODES.push([el,"",el.getAttribute("placeholder"),"","placeholder"]))}
+function applyLang(){I18N_NODES.forEach(([n,a,txt,b,attr])=>{if(attr)n.setAttribute(attr,T(txt));else n.nodeValue=a+T(txt)+b});
+  document.getElementById("langBtn").textContent=LANG==="fr"?"EN":"FR";const st=document.getElementById("syncTxt");if(/^(Snapshot|Instantané)/.test(st.textContent))st.textContent=T("Snapshot · 4 Sep 2026 · 622 lines");document.documentElement.lang=LANG;
+  document.getElementById("nav").innerHTML=TABS.map(([k,l],i)=>`<button class="${document.querySelector("#tab-"+k).classList.contains("on")?"on":""}" data-tab="${k}" onclick="showTab('${k}')">${T(l)}</button>`).join("");
+  if(window._r)render();}
+function toggleLang(){LANG=LANG==="fr"?"en":"fr";try{localStorage.setItem("vdija.lang",LANG)}catch(e){}applyLang()}
+
+/* ================= CONFIG ================= */
+const PW_HASH_SNAPSHOT="f955aa31bbc44cb4fbfa89344438cf628a1b695aa0ef638e9462a1d1cbc0a757"; // SHA-256 of the snapshot-mode editor password (see README §3). In live mode the Apps Script property NOTES_PW_HASH decides.
+const POLL_MS=5*60*1000;
+const DEFAULT_ENDPOINT="https://script.google.com/macros/s/AKfycbxD8vmY9jRQYKW9lyMayAm4mBss4rBBYjl_zhhGTOrwq8I4oftZmjLfq1PsiFskr4Y/exec"; // deployed 4 Sep 2026 under kef@magfin.com — clear the field to fall back to the embedded snapshot
+
+/* ================= BUDGET (TDB_Synthèse) ================= */
+const BUDGET=[
+ {sec:"FONCIER",code:"1",lots:[{lot:"Foncier",lines:[["Acquisition terrain & frais",4000000]]}]},
+ {sec:"ETUDES",code:"2",lots:[{lot:"Sun-Costs",lines:[["Startup costs",42000]]},{lot:"Etudes",lines:[["Architecte",172000],["OPC",30000],["Frais Etudes divers",85000],["Etudes Techniques Terrain — Laboratoire",12500],["Etudes Techniques Terrain — Géomètre",4000],["Etudes Techniques Construction — Etude Béton & Lots Techniques",63500],["Etudes Techniques Construction — Bureau de Contrôle",20000],["Etudes Techniques Construction — non détaillé",5000]]}]},
+ {sec:"CONSTRUCTION",code:"3",lots:[{lot:"Gros oeuvres",lines:[["Installation de chantier",0],["Terrassements",32648],["Fondations & infrastructure",833644],["Superstructure",384570],["Etanchéité",218166],["Autres",0],["Bord comp drainage",2310]]},{lot:"Structure métallique",lines:[["Structure métallique",38780]]}]},
+ {sec:"LOTS TECHNIQUES",code:"4a",lots:[{lot:"Electricité",lines:[["Electricité",341597]]},{lot:"Fluides & piscines & spa",lines:[["Marchandise plomberie - clim - chauffage",151413],["Sanitaires",80662],["Marchandise hamam - sauna - jacuzzi",137173],["Marchandise piscines",200094],["Fluides — non détaillé",113868]]},{lot:"Main d'oeuvre",lines:[["Main d'oeuvre électricité",85000],["Main d'oeuvre fluides",140000]]}]},
+ {sec:"SECONDS-OEUVRES",code:"4b",lots:[{lot:"Menuiserie aluminium",lines:[["Profilés alu & pose (frappe & murs-rideaux)",470000],["Gardes-corps",106500],["Verre",118684],["Pergolas",135000]]},{lot:"Faux-plafond",lines:[["Faux-plafond",100700]]}]},
+ {sec:"FINITIONS",code:"4c",lots:[{lot:"Revêtement sol",lines:[["Revêtement sol",325751]]},{lot:"Menuiserie bois",lines:[["Portes - placards",150000]]},{lot:"Stores & rideaux",lines:[["Stores & rideaux",0]]}]},
+ {sec:"EQUIPEMENTS",code:"4d",lots:[{lot:"Equipements",lines:[["(1.2) Réception area",0],["(1.4) Dining-room",300000],["(3.6) Main kitchen",100000],["(1.9) Levage",195000],["Monte-plats",0],["Lightings",0],["Audio & video",0],["Chambre-forte",0]]}]},
+ {sec:"EXTERIEUR",code:"4e",lots:[{lot:"Aménagements ext",lines:[["Portails extérieur",140000],["Système irrigation",120000],["Espaces paysagés",40000],["Oliviers",40000]]}]},
+ {sec:"IMPREVUS",code:"5",contingency:true,lots:[{lot:"Imprévus",lines:[["Provision pour imprévus",464441]]}]}
+];
+const BUDGET_TOTAL_SHEET=10000001; // Σ of the nine section totals in col M. Cell M2 reads 9,059,808 because its formula omits 4c FINITIONS and 5 IMPREVUS.
+const BUDGET_CELL_M2=9059808;
+let SECS=BUDGET.map(b=>b.sec);
+const CAT3={"1) FONCIER":"FONCIER","0) SUNK-COSTS":"ETUDES","2.1) AUTORISATION":"ETUDES","2.2) ETUDES":"ETUDES","2.3) OPC":"ETUDES","3.1) GROS OEUVRES":"CONSTRUCTION","3.2) METALLURGIE":"CONSTRUCTION","3.4) PEINTURE":"CONSTRUCTION","4.1) LOTS TECHNIQUES":"LOTS TECHNIQUES","4.2) SECONDS OEUVRES":"SECONDS-OEUVRES","4.3) FINITIONS":"FINITIONS","4.5) EQUIPEMENTS":"EQUIPEMENTS","4.6) EXTERIEUR":"EXTERIEUR"};
+const TOCLASS=new Set(["","?","Divers"]);
+// (category3, info) → budget lot, used for the lot-level actuals in the budget table
+function lotOf(c3,info){const i=(info||"").toUpperCase();
+  if(c3==="0) SUNK-COSTS")return["ETUDES","Sun-Costs"];if(/^2/.test(c3))return["ETUDES","Etudes"];
+  if(c3==="3.2) METALLURGIE")return["CONSTRUCTION","Structure métallique"];if(/^3/.test(c3))return["CONSTRUCTION","Gros oeuvres"];
+  if(c3==="4.1) LOTS TECHNIQUES")return["LOTS TECHNIQUES",i.includes("ELECTRI")?"Electricité":"Fluides & piscines & spa"];
+  if(c3==="4.2) SECONDS OEUVRES"){if(i.includes("ALUMINIUM")||i.includes("VERRE"))return["SECONDS-OEUVRES","Menuiserie aluminium"];if(i.includes("PLAFOND"))return["SECONDS-OEUVRES","Faux-plafond"];return["SECONDS-OEUVRES",null]}
+  if(c3==="4.3) FINITIONS"){if(i.includes("REV"))return["FINITIONS","Revêtement sol"];if(i.includes("BOIS")||i.includes("PORTE"))return["FINITIONS","Menuiserie bois"];if(i.includes("STORE")||i.includes("RIDEAU"))return["FINITIONS","Stores & rideaux"];return["FINITIONS",null]}
+  if(c3==="4.5) EQUIPEMENTS")return["EQUIPEMENTS","Equipements"];if(c3==="4.6) EXTERIEUR")return["EXTERIEUR","Aménagements ext"];return[null,null]}
+
+/* ================= LIVE SNAPSHOT — vDija_DAF_CdG_Trésorerie › Transactions, read 4 Sep 2026 (622 lines) =================
+   REAL_A: monthly aggregate [month, category3, offBank, inflow, outflow, lines]
+   REAL_B: counterparty aggregate [category3, counterparty, info, inflow, outflow, lines]
+   DETAIL_2026: the individual bank lines from 1 Jan 2026 [date, designation, ref, inflow, outflow, cat1, cat2, cat3, counterparty, info, offBank] */
+const SNAPSHOT_DATE="2026-09-04";
+const REAL_A=[["2022-01","0) SUNK-COSTS",1,0,20000,2],["2022-01","1) FONCIER",1,0,3857774,3],["2022-01","9.2) FINANCEMENT Sté",1,3857000,0,1],["2022-04","9.1) FINANCEMENT CCA",0,1000000,0,1],["2022-04","BANQUE",0,0,9,1],["2022-05","2.2) ETUDES",0,0,7252,1],["2022-05","BANQUE",0,0,8,1],["2022-06","0) SUNK-COSTS",0,0,22000,2],["2022-06","9.1) FINANCEMENT CCA",0,0,90000,1],["2022-06","BANQUE",0,0,33,3],["2022-08","BANQUE",0,0,8,1],["2022-08","LOGISTIQUE",0,0,7200,1],["2022-10","2.1) AUTORISATION",0,0,4392,2],["2022-10","9.1) FINANCEMENT CCA",0,0,500,1],["2022-10","?",0,0,24040,2],["2022-10","BANQUE",0,0,110,1],["2022-11","2.1) AUTORISATION",0,0,8094,1],["2022-11","9.1) FINANCEMENT CCA",0,100000,0,1],["2022-11","?",0,24040,0,2],["2022-11","BANQUE",0,0,44,3],["2022-11","LOGISTIQUE",0,0,12000,1],["2022-12","2.2) ETUDES",0,0,17000,2],["2022-12","BANQUE",0,0,1,1],["2023-01","4.5) EQUIPEMENTS",0,0,91400,1],["2023-01","?",0,0,3190,1],["2023-02","2.2) ETUDES",0,0,36000,1],["2023-02","4.1) LOTS TECHNIQUES",0,0,3404,1],["2023-02","BANQUE",0,0,44,3],["2023-03","2.2) ETUDES",0,0,30000,1],["2023-03","3.1) GROS OEUVRES",0,0,276949,2],["2023-03","BANQUE",0,0,44,4],["2023-04","2.1) AUTORISATION",0,0,21041,1],["2023-04","9.1) FINANCEMENT CCA",0,0,250000,1],["2023-04","?",0,21041,21041,2],["2023-04","BANQUE",0,0,61,3],["2023-07","2.2) ETUDES",0,0,6000,2],["2023-07","3.1) GROS OEUVRES",0,0,56448,1],["2023-07","4.2) SECONDS OEUVRES",0,0,100000,1],["2023-07","9.2) FINANCEMENT Sté",0,250000,0,1],["2023-07","BANQUE",0,0,44,4],["2023-08","2.1) AUTORISATION",0,0,17324,1],["2023-08","BANQUE",0,0,28,1],["2023-09","4.2) SECONDS OEUVRES",0,0,100000,1],["2023-09","9.2) FINANCEMENT Sté",0,0,50000,1],["2023-09","BANQUE",0,0,17,2],["2023-10","BANQUE",0,0,77,1],["2023-11","3.1) GROS OEUVRES",0,0,10000,2],["2023-11","9.2) FINANCEMENT Sté",0,200000,0,1],["2023-11","BANQUE",0,0,55,1],["2023-11","LOGISTIQUE",0,0,8640,1],["2023-12","2.2) ETUDES",0,0,15500,2],["2023-12","3.1) GROS OEUVRES",0,0,463085,2],["2023-12","9.1) FINANCEMENT CCA",0,9900,0,1],["2023-12","9.2) FINANCEMENT Sté",0,185000,0,1],["2023-12","BANQUE",0,0,44,4],["2024-01","4.1) LOTS TECHNIQUES",0,0,5000,1],["2024-01","9.2) FINANCEMENT Sté",0,20000,0,1],["2024-01","?",0,0,5000,1],["2024-01","Financière",0,0,11,1],["2024-02","3.1) GROS OEUVRES",0,0,158341,1],["2024-02","4.3) FINITIONS",0,0,50000,1],["2024-02","9.2) FINANCEMENT Sté",0,205000,0,2],["2024-02","Financière",0,0,22,2],["2024-03","2.2) ETUDES",0,0,8500,1],["2024-03","3.2) METALLURGIE",0,0,10000,1],["2024-03","9.1) FINANCEMENT CCA",0,0,18000,2],["2024-03","9.2) FINANCEMENT Sté",0,60000,0,1],["2024-03","FIDUCIERE",0,0,10000,1],["2024-03","Financière",0,0,83,5],["2024-04","2.2) ETUDES",0,0,40000,1],["2024-04","2.3) OPC",0,0,2370,1],["2024-04","4.1) LOTS TECHNIQUES",0,0,146950,3],["2024-04","5.1) IMPORT_ JETSKI",0,0,150445,1],["2024-04","9.2) FINANCEMENT Sté",0,455500,0,3],["2024-04","BANQUE",0,0,733,9],["2024-04","Courante",0,0,8600,2],["2024-05","2.3) OPC",0,0,4200,1],["2024-05","3.2) METALLURGIE",0,0,8780,1],["2024-05","4.1) LOTS TECHNIQUES",0,0,144843,5],["2024-05","9.2) FINANCEMENT Sté",0,60000,0,1],["2024-05","BANQUE",0,0,264,8],["2024-05","Courante",0,0,5220,3],["2024-06","2.2) ETUDES",0,0,35000,1],["2024-06","2.3) OPC",0,0,6148,2],["2024-06","4.1) LOTS TECHNIQUES",0,0,126728,6],["2024-06","5.1) IMPORT_ JETSKI",0,0,15000,1],["2024-06","9.1) FINANCEMENT CCA",0,0,15000,2],["2024-06","9.2) FINANCEMENT Sté",0,205000,0,3],["2024-06","BANQUE",0,0,363,14],["2024-06","Courante",0,0,4000,2],["2024-07","2.3) OPC",0,0,2000,1],["2024-07","3.1) GROS OEUVRES",0,0,333498,1],["2024-07","4.1) LOTS TECHNIQUES",0,0,12108,2],["2024-07","9.2) FINANCEMENT Sté",0,350000,0,1],["2024-07","BANQUE",0,0,234,6],["2024-07","Courante",0,0,3833,2],["2024-08","2.3) OPC",0,0,11600,2],["2024-08","4.1) LOTS TECHNIQUES",0,0,7433,1],["2024-08","BANQUE",0,0,113,3],["2024-12","2.2) ETUDES",0,0,1200,1],["2024-12","4.1) LOTS TECHNIQUES",0,0,40428,2],["2024-12","9.2) FINANCEMENT Sté",0,30000,0,2],["2024-12","BANQUE",0,0,36,3],["2025-01","2.2) ETUDES",0,0,20000,1],["2025-01","4.1) LOTS TECHNIQUES",0,0,2500,1],["2025-01","9.2) FINANCEMENT Sté",0,20000,0,1],["2025-01","BANQUE",0,0,77,2],["2025-02","3.1) GROS OEUVRES",0,0,24910,2],["2025-02","4.1) LOTS TECHNIQUES",0,0,20000,1],["2025-02","4.6) EXTERIEUR",0,0,19000,1],["2025-02","9.2) FINANCEMENT Sté",0,150000,0,4],["2025-02","BANQUE",0,0,187,4],["2025-03","3.1) GROS OEUVRES",0,0,35000,2],["2025-03","4.1) LOTS TECHNIQUES",0,0,9939,1],["2025-03","BANQUE",0,0,132,3],["2025-04","2.2) ETUDES",0,0,2000,1],["2025-04","3.1) GROS OEUVRES",0,0,100000,4],["2025-04","4.1) LOTS TECHNIQUES",0,0,3730,1],["2025-04","4.3) FINITIONS",0,0,36913,1],["2025-04","9.2) FINANCEMENT Sté",0,128940,0,6],["2025-04","?",0,36935,52353,4],["2025-04","BANQUE",0,0,479,11],["2025-05","2.2) ETUDES",0,0,11500,1],["2025-05","3.1) GROS OEUVRES",0,0,220578,9],["2025-05","3.2) METALLURGIE",0,0,7500,1],["2025-05","4.1) LOTS TECHNIQUES",0,0,46660,3],["2025-05","4.3) FINITIONS",0,0,410880,8],["2025-05","4.5) EQUIPEMENTS",0,0,12500,2],["2025-05","9.2) FINANCEMENT Sté",0,740000,0,9],["2025-05","?",0,0,2960,1],["2025-05","BANQUE",0,0,655,25],["2025-06","4.1) LOTS TECHNIQUES",0,0,5428,2],["2025-06","4.3) FINITIONS",0,0,99000,3],["2025-06","4.5) EQUIPEMENTS",0,0,8256,1],["2025-06","9.2) FINANCEMENT Sté",0,115551,0,3],["2025-06","?",0,0,12000,1],["2025-06","BANQUE",0,0,344,7],["2025-07","2.2) ETUDES",0,0,30000,1],["2025-07","4.1) LOTS TECHNIQUES",0,0,81320,3],["2025-07","4.2) SECONDS OEUVRES",0,0,42000,1],["2025-07","4.3) FINITIONS",0,0,200878,4],["2025-07","9.1) FINANCEMENT CCA",0,790000,0,4],["2025-07","9.2) FINANCEMENT Sté",0,101200,110000,4],["2025-07","?",0,0,5000,2],["2025-07","BANQUE",0,0,517,13],["2025-08","4.2) SECONDS OEUVRES",0,0,224500,2],["2025-08","4.6) EXTERIEUR",0,0,108000,1],["2025-08","9.2) FINANCEMENT Sté",0,0,20000,1],["2025-08","?",0,0,2700,2],["2025-08","BANQUE",0,0,270,6],["2025-09","2.2) ETUDES",0,0,39000,2],["2025-09","4.1) LOTS TECHNIQUES",0,0,998,1],["2025-09","4.6) EXTERIEUR",0,0,25000,1],["2025-09","5.1) IMPORT_ JETSKI",0,0,72519,3],["2025-09","9.1) FINANCEMENT CCA",0,100000,0,1],["2025-09","9.2) FINANCEMENT Sté",0,276000,140000,6],["2025-09","BANQUE",0,0,333,7],["2025-09","PRESTATAIRES DIVERS",0,0,18523,1],["2025-10","2.2) ETUDES",0,0,1200,1],["2025-10","4.1) LOTS TECHNIQUES",0,0,33914,4],["2025-10","9.1) FINANCEMENT CCA",0,440000,0,2],["2025-10","9.2) FINANCEMENT Sté",0,40000,100000,3],["2025-10","?",0,0,1871,1],["2025-10","ASSURANCES",0,0,5402,2],["2025-10","BANQUE",0,0,501,11],["2025-10","Divers",0,0,154500,1],["2025-10","SALAIRES",0,0,3000,1],["2025-11","3.1) GROS OEUVRES",0,0,50000,1],["2025-11","4.1) LOTS TECHNIQUES",0,0,21505,4],["2025-11","4.2) SECONDS OEUVRES",0,0,113516,3],["2025-11","4.5) EQUIPEMENTS",0,0,16800,1],["2025-11","5.4) SON & LUMIERES",0,0,3328,1],["2025-11","9.1) FINANCEMENT CCA",0,100360,0,2],["2025-11","BANQUE",0,0,452,14],["2025-11","Divers",0,0,235399,1],["2025-11","LOGISTIQUE",0,0,2880,1],["2025-11","SALAIRES",0,0,3000,1],["2025-12","2.2) ETUDES",0,0,40000,2],["2025-12","4.1) LOTS TECHNIQUES",0,0,9647,4],["2025-12","4.2) SECONDS OEUVRES",0,0,2900,1],["2025-12","4.3) FINITIONS",0,0,186500,5],["2025-12","4.5) EQUIPEMENTS",0,0,5730,1],["2025-12","9.1) FINANCEMENT CCA",0,371000,0,5],["2025-12","9.2) FINANCEMENT Sté",0,50000,100000,5],["2025-12","BANQUE",0,0,535,18],["2025-12","Divers",0,0,60000,1],["2025-12","SALAIRES",0,0,3000,1],["2026-01","3.4) PEINTURE",1,0,51000,1],["2026-01","4.1) LOTS TECHNIQUES",0,0,13602,1],["2026-01","4.1) LOTS TECHNIQUES",1,0,52890,1],["2026-01","4.2) SECONDS OEUVRES",0,0,100000,2],["2026-01","4.3) FINITIONS",0,0,50000,1],["2026-01","4.3) FINITIONS",1,0,73100,1],["2026-01","9.1) FINANCEMENT CCA",0,20000,0,1],["2026-01","9.2) FINANCEMENT Sté",0,250000,0,2],["2026-01","?",0,1559,90000,2],["2026-01","BANQUE",0,0,72,4],["2026-02","4.3) FINITIONS",0,0,148000,2],["2026-02","9.1) FINANCEMENT CCA",0,25000,70000,2],["2026-02","9.2) FINANCEMENT Sté",0,250000,55500,4],["2026-02","BANQUE",0,0,14,5],["2026-03","4.1) LOTS TECHNIQUES",0,0,3563,1],["2026-03","4.3) FINITIONS",0,0,108000,2],["2026-03","9.1) FINANCEMENT CCA",0,90000,0,3],["2026-03","BANQUE",0,0,11,3],["2026-04","4.1) LOTS TECHNIQUES",0,0,9220,3],["2026-04","4.2) SECONDS OEUVRES",0,0,12500,1],["2026-04","4.3) FINITIONS",0,0,9908,1],["2026-04","4.5) EQUIPEMENTS",0,0,80000,1],["2026-04","5.5) HOME-CINEMA",0,0,15039,1],["2026-04","9.1) FINANCEMENT CCA",0,150000,0,2],["2026-04","?",0,0,6380,2],["2026-04","BANQUE",0,0,314,6],["2026-05","4.1) LOTS TECHNIQUES",0,0,33028,3],["2026-05","4.2) SECONDS OEUVRES",0,0,31234,3],["2026-05","4.3) FINITIONS",0,0,9750,1],["2026-05","9.1) FINANCEMENT CCA",0,120000,0,2],["2026-05","?",0,0,34158,4],["2026-05","BANQUE",0,0,564,11],["2026-06","4.1) LOTS TECHNIQUES",0,0,69088,5],["2026-06","4.3) FINITIONS",0,0,11420,1],["2026-06","9.1) FINANCEMENT CCA",0,115000,0,6],["2026-06","?",0,0,86738,6],["2026-06","BANQUE",0,0,303,9],["2026-07","2.2) ETUDES",0,0,24000,1],["2026-07","4.1) LOTS TECHNIQUES",0,0,13652,2],["2026-07","9.1) FINANCEMENT CCA",0,70000,0,4],["2026-07","?",0,0,27409,3],["2026-07","BANQUE",0,0,396,7],["2026-08","9.1) FINANCEMENT CCA",0,20000,0,1],["2026-08","UTILITIES",0,0,11295,2]];
+const REAL_B=[["0) SUNK-COSTS","AMO_Design & Process","Plans Architecte APS",0,20000,2],["0) SUNK-COSTS","Architecte_LM Associés","Plans Architecte APS",0,22000,2],["1) FONCIER","Etude Chenguiti","Acquisition Terrain",0,3588999,2],["1) FONCIER","Etude Chenguiti","Frais Acquisition Terrain",0,268775,1],["2.1) AUTORISATION","Commune de Mansouria","",0,17324,1],["2.1) AUTORISATION","Commune de Mansouria","Frais Autorisation",0,8094,1],["2.1) AUTORISATION","Protection Civile","Frais Autorisation",0,4392,2],["2.1) AUTORISATION","TGR","",0,21041,1],["2.2) ETUDES","Architecte_ELYakini Charaf","Plans Architecte APD",0,36000,1],["2.2) ETUDES","Architecte_ELYakini Charaf","Plans Architecte EXE",0,64000,2],["2.2) ETUDES","BC_Axe Survey","Plans Architecte APD",0,7500,1],["2.2) ETUDES","BC_Axe Survey","Suivi Chantier",0,11500,1],["2.2) ETUDES","BET Sécurité","Etudes",0,1200,1],["2.2) ETUDES","BET Sécurité","Sécurité - Incendie",0,1200,1],["2.2) ETUDES","BET_Gold Etude","Plans Architecte APD",0,30000,1],["2.2) ETUDES","BET_Gold Etude","Suivi Chantier",0,30000,3],["2.2) ETUDES","Fiducière Bekkal","Consultation",0,15000,1],["2.2) ETUDES","K & ER Conseil","",0,27000,2],["2.2) ETUDES","K & ER Conseil","Dossier Go-Siyaha",0,117000,4],["2.2) ETUDES","Laboratoire_LEG","Etudes du Sol",0,3000,1],["2.2) ETUDES","Laboratoire_LEG","Tests Béton",0,11500,2],["2.2) ETUDES","Laboratoire_LSR","Etudes du Sol",0,7252,1],["2.2) ETUDES","Topographe","Plans Bornage",0,2000,1],["2.3) OPC","MESS","OPC",0,26318,7],["3.1) GROS OEUVRES","ETC","GROS-OEUVRES",0,1298321,9],["3.1) GROS OEUVRES","MESS","GROS-OEUVRES",0,50000,1],["3.1) GROS OEUVRES","MESS","LOT MAçONNERIE",0,367488,16],["3.1) GROS OEUVRES","autres","Puits",0,13000,1],["3.2) METALLURGIE","QUICK-MONTAGE","LOT METALLURGIE",0,26280,3],["3.4) PEINTURE","autres","LOT PEINTURE",0,51000,1],["4.1) LOTS TECHNIQUES","COGEPRA","ELECTRICITE",0,9000,2],["4.1) LOTS TECHNIQUES","FOGEBAT","FLUIDES",0,239986,8],["4.1) LOTS TECHNIQUES","HEAVEN POOL","FLUIDES",0,97457,6],["4.1) LOTS TECHNIQUES","IFAMEL","ELECTRICITE",0,50038,2],["4.1) LOTS TECHNIQUES","MAROC-ECLAIRAGE","ELECTRICITE",0,126244,9],["4.1) LOTS TECHNIQUES","MESS","FLUIDES",0,7517,1],["4.1) LOTS TECHNIQUES","MT-CLIM","FLUIDES",0,28480,2],["4.1) LOTS TECHNIQUES","OHNI-FER","FLUIDES",0,100968,4],["4.1) LOTS TECHNIQUES","SOFA","ELECTRICITE",0,166736,22],["4.1) LOTS TECHNIQUES","SOS SOLUTIONS","FLUIDES",0,90000,5],["4.1) LOTS TECHNIQUES","autres","FLUIDES",0,1152,1],["4.2) SECONDS OEUVRES","DIMENSIONEPARQUE","LOT REVËTEMENT PARQUET",0,5775,1],["4.2) SECONDS OEUVRES","KMY PRO","Verre",0,109216,2],["4.2) SECONDS OEUVRES","KMY","LOT ALUMINIUM",0,300000,4],["4.2) SECONDS OEUVRES","MESS","LOT FAUX-PLAFONDS",0,110000,1],["4.2) SECONDS OEUVRES","MESS","LOTS MULTIPLES",0,114500,1],["4.2) SECONDS OEUVRES","MESS","Menuiserie ALUMINIUM",0,4300,1],["4.2) SECONDS OEUVRES","MESS","autres",0,42000,1],["4.2) SECONDS OEUVRES","VIVA-GLASS","Verre",0,40859,4],["4.3) FINITIONS","CERABORA","LOT REVËTEMENT CARRELAGE",0,80461,3],["4.3) FINITIONS","FAY-WOOD","LOT REVËTEMENT PARQUET",0,50000,1],["4.3) FINITIONS","MESS","",0,108000,2],["4.3) FINITIONS","MESS","LOT PEINTURE",0,80000,3],["4.3) FINITIONS","MESS","LOT REVËTEMENT CARRELAGE",0,160000,3],["4.3) FINITIONS","MESS","LOT REVËTEMENT PARQUET",0,595429,11],["4.3) FINITIONS","MESS","LOT REVËTEMENTS PISCINES",0,149000,3],["4.3) FINITIONS","PORCELANOR","LOT REVËTEMENT CARRELAGE",0,67281,1],["4.3) FINITIONS","STAR-DEC","LOT PEINTURE",0,31078,3],["4.3) FINITIONS","autres","LOT REVËTEMENT PARQUET",0,73100,1],["4.5) EQUIPEMENTS","CASA-SCENE","EQUIPEMENTS AUDIO",0,8256,1],["4.5) EQUIPEMENTS","IXINA","EQUIPEMENTS CUISINES",0,171400,2],["4.5) EQUIPEMENTS","TTH","EQUIPEMENTS SECURITE",0,5730,1],["4.5) EQUIPEMENTS","TTH","video-surveillance",0,16800,1],["4.5) EQUIPEMENTS","autres","Fitness room",0,12500,2],["4.6) EXTERIEUR","ECO-PAYSAGE","EXT - Oliviers",0,19000,1],["4.6) EXTERIEUR","MESS","EXT - Irrigation",0,25000,1],["4.6) EXTERIEUR","MESS","EXT - Oliviers",0,108000,1],["5.1) IMPORT_ JETSKI","ESPACE MARINA","Jet-Ski",0,15000,1],["5.1) IMPORT_ JETSKI","JL Transit","Jet-Ski",0,5574,1],["5.1) IMPORT_ JETSKI","JL Transport","Jet-Ski",0,32399,1],["5.1) IMPORT_ JETSKI","RIVA YAMAHA","Jet-ski",0,150445,1],["5.1) IMPORT_ JETSKI","TGR","Jet-Ski",0,34546,1],["5.4) SON & LUMIERES","CASA-SCENE","Audio",0,3328,1],["5.5) HOME-CINEMA","ELECTROPLANET","EQUIPEMENTS CUISINES",0,15039,1],["9.1) FINANCEMENT CCA","KEF (Avance CCA)","",1109900,373500,10],["9.1) FINANCEMENT CCA","KEF (Avance CCA)","Avance en CCA",1746360,70000,16],["9.1) FINANCEMENT CCA","KEF (Avance CCA)","FINANCEMENT CCA",190000,0,6],["9.1) FINANCEMENT CCA","KEF INVEST (Prêt)","Avance en CCA",240000,0,5],["9.1) FINANCEMENT CCA","KEF INVEST (Prêt)","FINANCEMENT CCA",235000,0,8],["9.2) FINANCEMENT Sté","KEF ADVISORY (Prêt)","",1442500,50000,14],["9.2) FINANCEMENT Sté","KEF ADVISORY (Prêt)","REMB PRËT",0,55500,2],["9.2) FINANCEMENT Sté","KEF INVEST (Prêt)","",5526691,0,35],["9.2) FINANCEMENT Sté","KEF INVEST (Prêt)","Avance en CCA",80000,0,1],["9.2) FINANCEMENT Sté","KEF INVEST (Prêt)","FINANCEMENT Sté",100000,0,1],["9.2) FINANCEMENT Sté","KEF INVEST (Prêt)","REMB FINANCEMENT Sté",0,50000,1],["9.2) FINANCEMENT Sté","KEF INVEST (Prêt)","REMB PRËT",400000,310000,9],["9.2) FINANCEMENT Sté","KEF INVEST (Prêt)","Remboursement de CCA",0,110000,2],["9.2) FINANCEMENT Sté","PERSEUS (Prêt)","",250000,0,1],["9.2) FINANCEMENT Sté","PERSEUS (Prêt)","PRÊT",200000,0,1],["?","autres","",21041,53271,6],["?","","",62534,321569,30],["ASSURANCES","PREVAS","Jet-Ski",0,5402,2],["BANQUE","CIH","Commissions Banque",0,7869,239],["BANQUE","CIH","Commissions Importation",0,650,4],["Courante","ARCHI ITRI","ITRI",0,5000,2],["Courante","Architecte_ELYakini Charaf","Plans Architecte APS",0,5000,1],["Courante","SOMADI","ITRI",0,2053,2],["Courante","SOMADI","Impression Brochures",0,3600,1],["Courante","TOPO ITRI","ITRI",0,6000,3],["Divers","MESS","Divers",0,449899,3],["FIDUCIERE","MOORISH","Domiciliation & compta",0,10000,1],["Financière","CIH","Commissions Banque",0,116,8],["LOGISTIQUE","TIMAR","Location Stockage",0,30720,4],["PRESTATAIRES DIVERS","SYNDIC","autres",0,18523,1],["SALAIRES","Salaire Gardien","",0,9000,3],["UTILITIES","SRM","Divers",0,11295,2]];
+const DETAIL_2026=[["2026-01-01","REGLEMENT CAISSE/ HORS BANQUE","",0.0,73100.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.3) FINITIONS","autres","LOT REVËTEMENT PARQUET",1],["2026-01-01","REGLEMENT CAISSE/ HORS BANQUE","",0.0,52890.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.1) LOTS TECHNIQUES","MAROC-ECLAIRAGE","ELECTRICITE",1],["2026-01-01","REGLEMENT CAISSE/ HORS BANQUE","",0.0,51000.0,"Immobilisation","3) INVEST_ CONSTRUCTION","3.4) PEINTURE","autres","LOT PEINTURE",1],["2026-08-14","PAIEMENT FACTURE SRM Casablanca-CIHNET BILLING PAY","1755930",0.0,1992.84,"Charge","Exploitation courante","UTILITIES","SRM","Divers",0],["2026-08-14","PAIEMENT FACTURE SRM Casablanca-CIHNET BILLING PAY","1626330",0.0,9301.93,"Charge","Exploitation courante","UTILITIES","SRM","Divers",0],["2026-08-06","VIREMENT INSTANTANE RECU DE EL FEKKAK KARIM","8617503",20000.0,0.0,"Financement","9) FINANCEMENT","9.1) FINANCEMENT CCA","KEF (Avance CCA)","FINANCEMENT CCA",0],["2026-07-28","VIREMENT INSTANTANE RECU DE EL FEKKAK KARIM","933003",20000.0,0.0,"Financement","9) FINANCEMENT","9.1) FINANCEMENT CCA","KEF (Avance CCA)","FINANCEMENT CCA",0],["2026-07-28","VIREMENT INSTANTANE RECU DE EL FEKKAK KARIM","8935703",20000.0,0.0,"Financement","9) FINANCEMENT","9.1) FINANCEMENT CCA","KEF (Avance CCA)","FINANCEMENT CCA",0],["2026-07-28","COMMISSION VIREMENT EMIS","003ET01",0.0,11.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-07-28","VIREMENT EMIS EN FAVEUR DE ATELIER+CHARAF","9750910",0.0,24000.0,"Immobilisation","2) INVEST_ FRAIS PRELIMINAIRES","2.2) ETUDES","Architecte_ELYakini Charaf","Plans Architecte EXE",0],["2026-07-27","COMMISSION VIREMENT INSTANTANE","01D7M34",0.0,55.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-07-25","VIREMENT INSTANTANE EMIS EN FAVEUR DE HEAVEN POOL SARL","800801",0.0,12500.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.1) LOTS TECHNIQUES","HEAVEN POOL","FLUIDES",0],["2026-07-21","VIRT RECU DE LA PART M KARIM EL FEKKAK","8894505",20000.0,0.0,"Financement","9) FINANCEMENT","9.1) FINANCEMENT CCA","KEF (Avance CCA)","FINANCEMENT CCA",0],["2026-07-17","COMMISSION VIREMENT INSTANTANE","01PQF34",0.0,55.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-07-16","VIREMENT INSTANTANE EMIS EN FAVEUR DE AGMA TROIS","5927201",0.0,4410.0,"","","","","",0],["2026-07-15","VIREMENT INSTANTANE EMIS EN FAVEUR DE GALOUNA ELECTRO","4734801",0.0,6500.0,"","","","","",0],["2026-07-15","COMMISSION VIREMENT INSTANTANE","00MS734",0.0,110.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-07-15","VIRT RECU DE LA PART M KARIM EL FEKKAK","1138805",10000.0,0.0,"Financement","9) FINANCEMENT","9.1) FINANCEMENT CCA","KEF (Avance CCA)","FINANCEMENT CCA",0],["2026-07-14","COMMISSION VIREMENT INSTANTANE","01H6V34",0.0,55.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-07-13","VIREMENT INSTANTANE EMIS EN FAVEUR DE KADIR","1530001",0.0,1152.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.1) LOTS TECHNIQUES","autres","FLUIDES",0],["2026-07-02","PAIEMENT CHEQUE 2517625","2047809",0.0,16499.0,"","","","","",0],["2026-07-01","COMMISSION VIREMENT INSTANTANE","014Q934",0.0,55.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-06-30","VIREMENT INSTANTANE EMIS EN FAVEUR DE STAR DEC","5178001",0.0,11420.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.3) FINITIONS","STAR-DEC","LOT PEINTURE",0],["2026-06-30","VIREMENT INSTANTANE RECU DE KEF INVESTISSEMENT SARL AU","1614803",20000.0,0.0,"Financement","9) FINANCEMENT","9.1) FINANCEMENT CCA","KEF INVEST (Prêt)","FINANCEMENT CCA",0],["2026-06-26","VIREMENT INSTANTANE EMIS EN FAVEUR DE MAROC ECLAIRAGE","5363301",0.0,12000.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.1) LOTS TECHNIQUES","MAROC-ECLAIRAGE","ELECTRICITE",0],["2026-07-01","COMMISSION VIREMENT INSTANTANE","014Q934",0.0,55.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-06-30","VIREMENT INSTANTANE EMIS EN FAVEUR DE STAR DEC","5178001",0.0,11420.0,"","","","","",0],["2026-06-30","VIREMENT INSTANTANE RECU DE KEF INVESTISSEMENT SARL AU","1614803",20000.0,0.0,"Financement","9) FINANCEMENT","9.1) FINANCEMENT CCA","KEF INVEST (Prêt)","FINANCEMENT CCA",0],["2026-06-26","VIREMENT INSTANTANE RECU DE KEF INVESTISSEMENT SARL AU","6519803",20000.0,0.0,"Financement","9) FINANCEMENT","9.1) FINANCEMENT CCA","KEF INVEST (Prêt)","FINANCEMENT CCA",0],["2026-06-26","VIREMENT INSTANTANE EMIS EN FAVEUR DE MAROC ECLAIRAGE","5363301",0.0,12000.0,"","","","","",0],["2026-06-26","COMMISSION VIREMENT INSTANTANE","00OLI34",0.0,55.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-06-24","VIREMENT INSTANTANE EMIS EN FAVEUR DE DIMENTIONE PARQUET","3127701",0.0,5400.0,"","","","","",0],["2026-06-24","COMMISSION VIREMENT INSTANTANE","015GV34",0.0,55.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-06-16","VIREMENT INSTANTANE RECU DE KEF INVESTISSEMENT SARL AU","7953103",10000.0,0.0,"Financement","9) FINANCEMENT","9.1) FINANCEMENT CCA","KEF INVEST (Prêt)","FINANCEMENT CCA",0],["2026-06-16","COMMISSION VIREMENT INSTANTANE","01CW834",0.0,55.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-06-16","VIREMENT INSTANTANE EMIS EN FAVEUR DE STAR DEC","8001601",0.0,3160.0,"","","","","",0],["2026-06-15","VIREMENT EMIS EN FAVEUR DE OHNI+FER+SARL","4705710",0.0,36580.0,"","","","","",0],["2026-06-15","COMMISSION VIREMENT EMIS","01UEC01",0.0,11.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-06-15","COMMISSION VIREMENT EMIS","01UEC01",0.0,11.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-06-15","VIREMENT EMIS EN FAVEUR DE OHNI+FER+SARL","4705710",0.0,36580.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.1) LOTS TECHNIQUES","OHNI-FER","FLUIDES",0],["2026-06-10","VIRT RECU DE LA PART SARL AU KEF INVESTISSEMENT","2271605",10000.0,0.0,"Financement","9) FINANCEMENT","9.1) FINANCEMENT CCA","KEF INVEST (Prêt)","FINANCEMENT CCA",0],["2026-06-09","COMMISSION VIREMENT INSTANTANE","01L5334",0.0,55.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-06-09","VIREMENT INSTANTANE EMIS EN FAVEUR DE MAROC ECLAIRAGE","6629101",0.0,12000.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.1) LOTS TECHNIQUES","MAROC-ECLAIRAGE","ELECTRICITE",0],["2026-06-09","VIRT RECU DE LA PART SARL AU KEF INVESTISSEMENT","6252705",35000.0,0.0,"Financement","9) FINANCEMENT","9.1) FINANCEMENT CCA","KEF INVEST (Prêt)","FINANCEMENT CCA",0],["2026-06-04","VIREMENT EMIS EN FAVEUR DE BENEFICIAIRE SOFA","7966301",0.0,3818.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.1) LOTS TECHNIQUES","SOFA","ELECTRICITE",0],["2026-06-04","COMMISSION VIREMENT EMIS","00X1T01",0.0,2.75,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-06-01","COMMISSION VIREMENT EMIS","01FZG01",0.0,2.75,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-06-01","VIREMENT EMIS EN FAVEUR DE BENEFICIAIRE SOFA","6892101",0.0,4690.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.1) LOTS TECHNIQUES","SOFA","ELECTRICITE",0],["2026-06-01","VIREMENT INSTANTANE EMIS EN FAVEUR DE SRM CASA SETTAT","7099901",0.0,18178.0,"","","","","",0],["2026-06-01","COMMISSION VIREMENT INSTANTANE","01FZH34",0.0,55.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-05-26","VIREMENT INSTANTANE RECU DE KEF INVESTISSEMENT SARL AU","3543703",20000.0,0.0,"Financement","9) FINANCEMENT","9.1) FINANCEMENT CCA","KEF INVEST (Prêt)","FINANCEMENT CCA",0],["2026-05-22","COMMISSION VIREMENT INSTANTANE","019KC34",0.0,55.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-05-21","VIREMENT INSTANTANE EMIS EN FAVEUR DE MONDIAL KIHEL","5232301",0.0,13000.0,"","","","","",0],["2026-05-21","COMMISSION VIREMENT INSTANTANE","01IOJ34",0.0,55.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-05-21","COMMISSION VIREMENT INSTANTANE","01IOI34",0.0,55.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-05-20","VIREMENT INSTANTANE EMIS EN FAVEUR DE SODREYAS","8331301",0.0,7078.0,"","","","","",0],["2026-05-20","VIREMENT INSTANTANE EMIS EN FAVEUR DE COGEPRA","8665801",0.0,4200.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.1) LOTS TECHNIQUES","COGEPRA","ELECTRICITE",0],["2026-05-19","COMMISSION VIREMENT INSTANTANE","00QT934",0.0,55.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-05-18","VIREMENT INSTANTANE EMIS EN FAVEUR DE STAR DEC","470101",0.0,9750.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.3) FINITIONS","STAR-DEC","LOT PEINTURE",0],["2026-05-18","COMMISSION VIREMENT INSTANTANE","01KR434",0.0,55.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-05-16","VIREMENT INSTANTANE EMIS EN FAVEUR DE MONDIAL KIHEL","7366201",0.0,7000.0,"","","","","",0],["2026-05-15","VIREMENT INSTANTANE EMIS EN FAVEUR DE TECHNIQUES TENTES ET STO","6501301",0.0,7080.0,"","","","","",0],["2026-05-15","COMMISSION VIREMENT INSTANTANE","01G8G34",0.0,55.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-05-14","COMMISSION VIREMENT EMIS","00MJ301",0.0,2.75,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-05-14","VIREMENT EMIS EN FAVEUR DE BENEFICIAIRE SOFA","5996101",0.0,3828.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.1) LOTS TECHNIQUES","SOFA","ELECTRICITE",0],["2026-05-12","COMMISSION VIREMENT INSTANTANE","01JL534",0.0,55.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-05-12","VIREMENT INSTANTANE EMIS EN FAVEUR DE VIVAGLASS","9650401",0.0,12809.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.2) SECONDS OEUVRES","VIVA-GLASS","Verre",0],["2026-05-08","VIREMENT EMIS EN FAVEUR DE HEAVEN+POOL+SARL","3445710",0.0,25000.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.1) LOTS TECHNIQUES","HEAVEN POOL","FLUIDES",0],["2026-05-08","COMMISSION VIREMENT EMIS","00HK901",0.0,11.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-05-07","VIRT RECU DE LA PART SARL AU KEF INVESTISSEMENT","9562105",100000.0,0.0,"Financement","9) FINANCEMENT","9.1) FINANCEMENT CCA","KEF INVEST (Prêt)","FINANCEMENT CCA",0],["2026-05-07","COMMISSION VIREMENT INSTANTANE","01R7134",0.0,55.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-05-07","VIREMENT INSTANTANE EMIS EN FAVEUR DE VIVAGLASS","5125401",0.0,12650.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.2) SECONDS OEUVRES","VIVA-GLASS","Verre",0],["2026-05-06","COMMISSION VIREMENT INSTANTANE","00YAC34",0.0,110.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-05-06","VIREMENT INSTANTANE EMIS EN FAVEUR DE DIMENSIONEPARQUE","7778201",0.0,5775.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.2) SECONDS OEUVRES","DIMENSIONEPARQUE","LOT REVËTEMENT PARQUET",0],["2026-04-28","VIREMENT INSTANTANE EMIS EN FAVEUR DE STAR DEC SARL","6522101",0.0,9908.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.3) FINITIONS","STAR-DEC","LOT PEINTURE",0],["2026-04-28","COMMISSION VIREMENT INSTANTANE","0141X34",0.0,110.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-04-24","COMMISSION VIREMENT INSTANTANE","019ZP34",0.0,110.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-04-24","VIREMENT INSTANTANE EMIS EN FAVEUR DE COGEPRA","786401",0.0,4800.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.1) LOTS TECHNIQUES","COGEPRA","ELECTRICITE",0],["2026-04-15","PAIEMENT CHEQUE 2517623","1223809",0.0,4460.0,"","","","","",0],["2026-04-10","COMMISSION SUR MISE A DISPOSITION EN FAVEUR DE BAHROUCH ZAID","00SGG10",0.0,33.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-04-10","EMISSION MISE A DISPOSITION EN FAVEUR DE BAHROUCH ZAID","9040501",0.0,1920.0,"","","","","",0],["2026-04-09","VIREMENT INSTANTANE EMIS EN FAVEUR DE VIVAGLASS","9951001",0.0,12500.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.2) SECONDS OEUVRES","VIVA-GLASS","Verre",0],["2026-04-09","PAIEMENT CHEQUE 2517622","4994609",0.0,80000.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.5) EQUIPEMENTS","IXINA","EQUIPEMENTS CUISINES",0],["2026-04-09","COMMISSION VIREMENT INSTANTANE","01K1I34",0.0,55.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-04-08","VIREMENT EMIS EN FAVEUR DE BENEFICIAIRE SOFA","7982001",0.0,1251.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.1) LOTS TECHNIQUES","SOFA","ELECTRICITE",0],["2026-04-08","COMMISSION VIREMENT EMIS","00RHW01",0.0,2.75,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-04-07","VIRT RECU DE LA PART SARL AU KEF INVESTISSEMENT","2041305",100000.0,0.0,"Financement","9) FINANCEMENT","9.1) FINANCEMENT CCA","KEF INVEST (Prêt)","Avance en CCA",0],["2026-04-06","PAIEMENT CHEQUE 2517620","9180909",0.0,15039.0,"Immobilisation","5) INVEST_ EQUIPEMENTS ANIMATION","5.5) HOME-CINEMA","ELECTROPLANET","EQUIPEMENTS CUISINES",0],["2026-04-03","VIREMENT EMIS EN FAVEUR DE BENEFICIAIRE SOFA","8791801",0.0,3169.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.1) LOTS TECHNIQUES","SOFA","ELECTRICITE",0],["2026-04-03","COMMISSION VIREMENT EMIS","033VE01",0.0,2.75,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-04-01","VIRT RECU DE LA PART SARL AU KEF INVESTISSEMENT","9264105",50000.0,0.0,"Financement","9) FINANCEMENT","9.1) FINANCEMENT CCA","KEF INVEST (Prêt)","Avance en CCA",0],["2026-03-31","VIREMENT EMIS EN FAVEUR DE BENEFICIAIRE SOFA","8802101",0.0,3563.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.1) LOTS TECHNIQUES","SOFA","ELECTRICITE",0],["2026-03-31","COMMISSION VIREMENT EMIS","02R7R01",0.0,2.75,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-03-17","VIREMENT EMIS EN FAVEUR DE BENEFICIAIRE MESS+ELEC+PRO+SARL","5531301",0.0,48000.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.3) FINITIONS","MESS","",0],["2026-03-17","COMMISSION VIREMENT EMIS","01VD201",0.0,2.75,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-03-17","VIRT RECU DE LA PART SARL AU KEF INVESTISSEMENT","9393205",50000.0,0.0,"Financement","9) FINANCEMENT","9.1) FINANCEMENT CCA","KEF INVEST (Prêt)","Avance en CCA",0],["2026-03-16","VIREMENT INSTANTANE RECU DE KEF INVESTISSEMENT SARL AU","1273003",20000.0,0.0,"Financement","9) FINANCEMENT","9.1) FINANCEMENT CCA","KEF INVEST (Prêt)","Avance en CCA",0],["2026-03-16","VIREMENT EMIS EN FAVEUR DE BENEFICIAIRE MESS ELEC PLO SARL","1301001",0.0,60000.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.3) FINITIONS","MESS","",0],["2026-03-16","COMMISSION VIREMENT EMIS","0177U01",0.0,5.5,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-03-15","VIREMENT INSTANTANE RECU DE KEF INVESTISSEMENT SARL AU","654903",20000.0,0.0,"Financement","9) FINANCEMENT","9.1) FINANCEMENT CCA","KEF INVEST (Prêt)","Avance en CCA",0],["2026-02-24","COMMISSION VIREMENT EMIS","0019T01",0.0,2.75,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-02-24","COMMISSION VIREMENT EMIS","0019U01",0.0,2.75,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-02-24","VIREMENT EMIS EN FAVEUR DE BENEFICIAIRE KEF+ADVISORY+SERVI","9889301",0.0,25000.0,"Financement","9) FINANCEMENT","9.2) FINANCEMENT Sté","KEF ADVISORY (Prêt)","REMB PRËT",0],["2026-02-24","VIREMENT EMIS EN FAVEUR DE BENEFICIAIRE MESS+ELEC+PRO+SARL","9890501",0.0,18000.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.3) FINITIONS","MESS","LOT REVËTEMENT PARQUET",0],["2026-02-23","VIRT RECU DE LA PART SARL AU KEF INVESTISSEMENT","7199205",50000.0,0.0,"Financement","9) FINANCEMENT","9.2) FINANCEMENT Sté","KEF INVEST (Prêt)","REMB PRËT",0],["2026-02-20","VIREMENT RECU DE KARIM EL FEKKAK","6478402",25000.0,0.0,"Financement","9) FINANCEMENT","9.1) FINANCEMENT CCA","KEF (Avance CCA)","Avance en CCA",0],["2026-02-20","VIREMENT EMIS EN FAVEUR DE BENEFICIAIRE KEF+ADVISORY+SERVI","193501",0.0,30500.0,"Financement","9) FINANCEMENT","9.2) FINANCEMENT Sté","KEF ADVISORY (Prêt)","REMB PRËT",0],["2026-02-20","COMMISSION VIREMENT EMIS","0019J01",0.0,2.75,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-02-14","COMMISSION VIREMENT EMIS","0078W01",0.0,2.75,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-02-14","COMMISSION VIREMENT EMIS","0078X01",0.0,2.75,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-02-14","VIREMENT EMIS EN FAVEUR DE BENEFICIAIRE KEF","6461601",0.0,70000.0,"Financement","9) FINANCEMENT","9.1) FINANCEMENT CCA","KEF (Avance CCA)","Avance en CCA",0],["2026-02-14","VIREMENT EMIS EN FAVEUR DE BENEFICIAIRE MESS+ELEC+PRO+SARL","6459201",0.0,130000.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.3) FINITIONS","MESS","LOT REVËTEMENT PARQUET",0],["2026-02-12","VIRT RECU DE LA PART SARL AU KEF INVESTISSEMENT","5183205",200000.0,0.0,"Financement","9) FINANCEMENT","9.2) FINANCEMENT Sté","KEF INVEST (Prêt)","REMB PRËT",0],["2026-01-26","COMMISSION VIREMENT EMIS","017J501",0.0,2.75,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-01-26","VIREMENT EMIS EN FAVEUR DE BENEFICIAIRE SOFA,+230780858113","5281901",0.0,13602.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.1) LOTS TECHNIQUES","SOFA","ELECTRICITE",0],["2026-01-26","VIRT RECU DE LA PART ROYAL COMPLEXE DES SPORTS EQUESTRES","2809705",1559.0,0.0,"","","","","",0],["2026-01-20","PAIEMENT CHEQUE 2517598","2456009",0.0,90000.0,"","","","","",0],["2026-01-13","VIRT RECU DE LA PART SARL AU KEF INVESTISSEMENT","5295005",100000.0,0.0,"Financement","9) FINANCEMENT","9.2) FINANCEMENT Sté","KEF INVEST (Prêt)","FINANCEMENT Sté",0],["2026-01-12","VIREMENT EMIS EN FAVEUR DE BENEFICIAIRE MESS+ELEC+PRO+SARL","4787701",0.0,50000.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.3) FINITIONS","MESS","LOT REVËTEMENT PARQUET",0],["2026-01-12","COMMISSION VIREMENT EMIS","01EUS01",0.0,2.75,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-01-10","COMMISSION VIREMENT EMIS","007TG01",0.0,11.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0],["2026-01-10","VIREMENT EMIS EN FAVEUR DE KMY+MENUISERIE+ET+","1095410",0.0,80000.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.2) SECONDS OEUVRES","KMY","LOT ALUMINIUM",0],["2026-01-08","VIREMENT RECU DE KARIM EL FEKKAK","SK59102",20000.0,0.0,"Financement","9) FINANCEMENT","9.1) FINANCEMENT CCA","KEF (Avance CCA)","Avance en CCA",0],["2026-01-08","VIREMENT INSTANTANE EMIS EN FAVEUR DE KMY MENUISERIE ET TRAVAU","9673001",0.0,20000.0,"Immobilisation","4) INVEST_ AMENAGEMENTS & AGENCEMENTS","4.2) SECONDS OEUVRES","KMY","LOT ALUMINIUM",0],["2026-01-08","VIREMENTT RECU DE LA PART KEF INVESTISSEMENT SARL AU","5723913",150000.0,0.0,"Financement","9) FINANCEMENT","9.2) FINANCEMENT Sté","KEF INVEST (Prêt)","REMB PRËT",0],["2026-01-08","COMMISSION VIREMENT INSTANTANE","00QXC34",0.0,55.0,"Charge","Exploitation Financière","BANQUE","CIH","Commissions Banque",0]];
+function cat1Of(c3){if(!c3||c3==="?")return"";if(c3.startsWith("9"))return"Financement";if(/^[0-5]/.test(c3))return"Immobilisation";return"Charge"}
+function cat2Of(c3){if(c3.startsWith("9"))return"9) FINANCEMENT";if(c3.startsWith("1"))return"1) INVEST_ FONCIER";if(/^(0|2)/.test(c3))return"2) INVEST_ FRAIS PRELIMINAIRES";if(c3.startsWith("3"))return"3) INVEST_ CONSTRUCTION";if(c3.startsWith("4"))return"4) INVEST_ AMENAGEMENTS & AGENCEMENTS";if(c3.startsWith("5"))return"5) AUTRES ACTIFS";return c3==="BANQUE"||c3==="Financière"?"Exploitation Financière":"Exploitation courante"}
+function sampleTx(){
+  const tx=DETAIL_2026.map(r=>({date:r[0],desig:r[1],ref:r[2],inflow:r[3],outflow:r[4],cat1:r[5],cat2:r[6],cat3:r[7]==="?"?"":r[7],cpty:r[8],info:r[9],off:!!r[10]}));
+  REAL_A.filter(a=>a[0]<"2026-01").forEach(([m,c3,off,inf,out,n])=>tx.push({date:m+(off?"-01":"-15"),desig:(off?"REGLEMENT HORS BANQUE":"Agrégat mensuel")+" · "+n+" ligne"+(n>1?"s":""),ref:"",inflow:inf,outflow:out,cat1:cat1Of(c3),cat2:c3==="?"?"":cat2Of(c3),cat3:c3==="?"?"":c3,cpty:"(agrégé)",info:"",off:!!off}));
+  return tx.sort((a,b)=>b.date.localeCompare(a.date));
+}
+
+/* ================= STATE ================= */
+let DATA={transactions:sampleTx(),budget:BUDGET,meta:{source:"sample",generatedAt:new Date().toISOString()}};
+let NOTES={commentary:"On the 4 September 2026 snapshot the project has spent Dhs 9.55m against a Dhs 10.0m approved budget (95.5 %), of which Dhs 464k is the contingency. Overruns on the sections already closed — finitions (Dhs 1.39m vs 476k: parquet, carrelage and pool finishes invoiced by MESS), construction (+296k, the MESS masonry lot) and studies (+49k) — total Dhs 1.26m and exceed the contingency by roughly Dhs 800k, while equipment (36 %), exterior works (45 %), technical lots (73 %) and seconds-œuvres (78 %) still have Dhs 1.1m to spend. Dhs 741k of bank lines carry no category and Dhs 256k went to non-budget assets (jet-ski, audio, home-cinema); both must be resolved before the forecast at completion is reliable.",
+  phaseStatus:"Phase: interior finishing & equipment installation.\nNext: classify the 39 open lines (incl. Dhs 449,899 MESS 'Divers'); re-baseline FINITIONS in TDB_Synthèse and fix the BUDGET cell M2 formula (omits 4c and 5); award kitchen / dining-room equipment; close fluides with FOGEBAT and HEAVEN POOL.",
+  committedNotPaid:"0",plannedEnd:"2027-03",
+  phaseMarkers:"2022 · Land acquisition (Etude Chenguiti) and permits; KEF INVEST loan\n2023 · Gros œuvre (ETC)\n2024 · Masonry (MESS), technical lots start, jet-ski import\n2025 · Finishes: parquet, carrelage, pools; aluminium (KMY); CCA drawdowns\n2026 · Painting, glazing, kitchen equipment; last technical lots"};
+try{const s=localStorage.getItem("vdija.notes");if(s)NOTES=Object.assign(NOTES,JSON.parse(s))}catch(e){}
+let secFilter="all";
+
+/* ================= HELPERS ================= */
+const fmt=v=>Math.round(v).toLocaleString("en-US");
+const D=v=>"Dhs "+fmt(v);
+const M=v=>(v/1e6).toFixed(2);
+const K=v=>fmt(v/1000);
+const pc=v=>(v*100).toFixed(1)+"%";
+const ym=d=>d.slice(0,7);
+const monthsBetween=(a,b)=>{const out=[];let [y,m]=a.split("-").map(Number);const [ye,me]=b.split("-").map(Number);while(y<ye||(y===ye&&m<=me)){out.push(`${y}-${String(m).padStart(2,"0")}`);m++;if(m>12){m=1;y++}}return out};
+function secOf(t){return CAT3[t.cat3]||null}
+
+/* ================= COMPUTE ================= */
+function compute(){
+  const yr=document.getElementById("fYear").value;
+  const all=DATA.transactions;
+  const tx=all.filter(t=>yr==="all"||t.date.startsWith(yr));
+  const spent={},lotSpent={},lineSpent={};SECS.forEach(s=>spent[s]=0);
+  const budget={};let budgetTotal=0;DATA.budget.forEach(b=>{budget[b.sec]=b.lots.reduce((a,l)=>a+l.lines.reduce((x,y)=>x+y[1],0),0);budgetTotal+=budget[b.sec]});
+  let land=0,opex=0,fundCCA=0,fundSte=0,inflow=0,outflow=0,other=0,toclassAmt=0;const toclass=[];const cpty={};
+  all.forEach(t=>{if(!t.off){inflow+=t.inflow;outflow+=t.outflow}});
+  tx.forEach(t=>{
+    const net=t.outflow-t.inflow;
+    const s=secOf(t);
+    if(s)spent[s]+=net;
+    else if(t.cat3==="9.1) FINANCEMENT CCA")fundCCA+=t.inflow-t.outflow;
+    else if(t.cat3==="9.2) FINANCEMENT Sté")fundSte+=t.inflow-t.outflow;
+    else if(/^5/.test(t.cat3))other+=net;
+    else if(TOCLASS.has(t.cat3)){toclass.push(t);toclassAmt+=net}
+    else opex+=net;
+  });
+  land=spent["FONCIER"];
+  const overruns=SECS.filter(x=>x!=="IMPREVUS").reduce((a,x)=>a+Math.max(spent[x]-budget[x],0),0);
+  spent["IMPREVUS"]=overruns; // the contingency is consumed by the overruns of the other sections
+  REAL_B.forEach(([c3,cp,info,inf,out])=>{if(yr!=="all")return;const [sec,lot]=lotOf(c3,info);if(sec&&lot){const k=sec+"|"+lot;lotSpent[k]=(lotSpent[k]||0)+out-inf}
+    if(CAT3[c3]||/^5/.test(c3)||TOCLASS.has(c3))cpty[cp||"(non renseigné)"]=(cpty[cp||"(non renseigné)"]||0)+out});
+  const cptyIn={};
+  if(DATA.meta.source==="sample"){REAL_B.forEach(([c3,cp,info,inf,out])=>{if(inf>0||/^9/.test(c3)){const k=cp||"(non renseigné)";cptyIn[k]=(cptyIn[k]||0)+inf-out}})}
+  else{tx.forEach(t=>{if(t.inflow>0||/^9/.test(t.cat3)){const k=t.cpty||"(non renseigné)";cptyIn[k]=(cptyIn[k]||0)+t.inflow-t.outflow}})}
+  const totSpent=SECS.filter(x=>x!=="IMPREVUS").reduce((a,s)=>a+spent[s],0);
+  const conBudget=budgetTotal-budget["FONCIER"]-budget["IMPREVUS"], conSpent=totSpent-land;
+  // monthly series
+  const months=monthsBetween("2022-04",ym(SNAPSHOT_DATE));
+  const bySecMonth={};SECS.forEach(s=>bySecMonth[s]=months.map(()=>0));
+  const inM=months.map(()=>0),outM=months.map(()=>0);
+  all.forEach(t=>{const i=months.indexOf(ym(t.date));if(i<0)return;const s=secOf(t);if(s)bySecMonth[s][i]+=t.outflow-t.inflow;if(!t.off){inM[i]+=t.inflow;outM[i]+=t.outflow}});
+  const capM=months.map((_,i)=>SECS.reduce((a,s)=>a+bySecMonth[s][i],0));
+  const cum=[];capM.reduce((a,v,i)=>(cum[i]=a+v),0);
+  const last6=capM.slice(-6);const burn=last6.reduce((a,b)=>a+b,0)/6;
+  const committed=parseFloat(String(NOTES.committedNotPaid).replace(/[^\d.]/g,""))||0;
+  const remaining=budgetTotal-totSpent;
+  const eac=totSpent+committed+Math.max(remaining-committed,0);
+  return {tx,spent,lotSpent,budget,budgetTotal,conBudget,conSpent,totSpent,overruns,other,toclassAmt,cptyIn,remaining,eac,land,opex,fundCCA,fundSte,inflow,outflow,cash:inflow-outflow,toclass,cpty,months,bySecMonth,inM,outM,capM,cum,burn,committed};
+}
+
+/* ================= RENDER ================= */
+function render(){
+  const r=compute();window._r=r;
+  const chk=document.getElementById("chk");
+  const live=DATA.meta.source==="live";const m2=live?(DATA.meta.budgetCellM2||r.budgetTotal):BUDGET_CELL_M2;const ok=live?true:Math.abs(r.budgetTotal-BUDGET_TOTAL_SHEET)<1, m2ok=Math.abs(r.budgetTotal-m2)<1;
+  chk.textContent=ok?(m2ok?T("reconciles to the sheets"):T("Σ sections ")+D(r.budgetTotal)+T(" · cell M2 reads ")+D(m2)+(live?"":T(" (formula omits 4c and 5)"))):T("budget total differs from sheet");chk.className="badge"+(ok?(m2ok?"":" amber"):" red");
+  const consumed=r.totSpent/r.budgetTotal;
+  const runway=r.burn>0?(r.remaining/r.burn):NaN;
+  document.getElementById("kpis").innerHTML=[
+    ["dk",D(r.budgetTotal),"approved budget","Foncier "+M(r.budget["FONCIER"])+T("m · construction ")+M(r.conBudget)+T("m · imprévus ")+K(r.budget["IMPREVUS"])+"k"],
+    ["",D(r.totSpent),"spent to date",pc(consumed)+T(" of budget · construction ")+pc(r.conSpent/r.conBudget)+T(" · overruns ")+K(r.overruns)+T("k vs ")+K(r.budget["IMPREVUS"])+T("k imprévus")],
+    ["",D(r.remaining),r.remaining<0?"overrun":"remaining",r.remaining<0?T("budget exceeded · burn ")+K(r.burn)+T("k / month over the last 6 months"):(isFinite(runway)?runway.toFixed(0)+T(" months at current burn (")+K(r.burn)+T("k / month)"):"—")],
+    ["",D(r.eac),"forecast at completion",(r.eac-r.budgetTotal>=0?"+":"")+fmt(r.eac-r.budgetTotal)+T(" vs budget, incl. ")+K(r.committed)+T("k committed")]
+  ].map(([c,v,l,s])=>`<div class="kpi ${c}"><div class="v" style="color:${c?"":(l==="overrun"?"var(--red)":"var(--terra)")}">${v}</div><div class="l">${T(l)}</div><div class="s">${s}</div></div>`).join("");
+  document.getElementById("strip").innerHTML=[
+    [M(r.land)+"m","land (Foncier)"],[M(r.conSpent)+"m","construction capex"],[K(r.opex)+"k","operating & bank charges"],
+    [M(r.fundCCA+r.fundSte)+"m","funding drawn (net)"],[K(r.toclassAmt)+"k","to classify"],[K(r.other)+"k","other assets (5.x)"]
+  ].map(([v,l])=>`<div class="chip"><div class="v">${v}</div><div class="l">${T(l)}</div></div>`).join("");
+  drawBullet(r);drawScurve(r);drawTreemap(r);drawBVA(r);drawSankey(r);drawFlows(r);drawCptyIn(r);drawCpty(r);drawHeat(r);drawSmalls(r);renderTx();
+  document.getElementById("toclass").innerHTML=(r.toclass.length?`<b>${D(r.toclassAmt)}${T(" net across ")}${r.toclass.length}${T(" lines")}</b>${T(' without a usable OPERATION CATEGORY 3 (blank, "?" or "Divers" — the three "Divers" lines to MESS alone total Dhs 449,899 and are probably capex).')}<br>`:T("Nothing to classify — every bank line is mapped."))+r.toclass.slice(0,40).map(t=>`${t.date} · ${t.desig}${t.cpty&&t.cpty!=="(agrégé)"?" · "+t.cpty:""} · ${t.outflow?D(t.outflow):"+"+D(t.inflow)}`).join("<br>");
+  Object.keys(NOTES).forEach(k=>{const el=document.getElementById("n_"+k);if(el&&!document.body.classList.contains("editing"))el.textContent=NOTES[k]});
+  document.getElementById("printDate").textContent=new Date().toLocaleString();
+  document.getElementById("printSrc").textContent=DATA.meta.source==="sample"?T("snapshot of the Transactions sheet, 4 Sep 2026"):T("live · ")+DATA.meta.generatedAt;
+}
+
+function drawBullet(r){
+  const W=1100,rowH=34,lw=210,vw=150,H=SECS.length*rowH+8;
+  const mx=Math.max(...SECS.map(s=>Math.max(r.budget[s],r.spent[s])))*1.15;
+  const x=v=>lw+v/mx*(W-lw-vw);
+  let s=`<svg viewBox="0 0 ${W} ${H}" aria-label="Bullet chart of spent against budget per section">`;
+  SECS.forEach((sec,i)=>{
+    const y=i*rowH+4,b=r.budget[sec],sp=r.spent[sec],over=sp>b,ctg=sec==="IMPREVUS";
+    s+=`<text x="0" y="${y+18}" font-size="13" fill="#2B2523" font-weight="700">${sec}${ctg?' <tspan font-weight="400" fill="#7A736E">'+T("· absorbs overruns")+'</tspan>':""}</text>`;
+    s+=`<rect x="${x(b*0.9)}" y="${y+4}" width="${x(b*1.1)-x(b*0.9)}" height="20" fill="#E2DFD0"/>`;
+    s+=`<rect x="${x(0)}" y="${y+9}" width="${Math.max(1,x(sp)-x(0))}" height="10" fill="${over?"#A63A2E":"#B85042"}" rx="1"/>`;
+    s+=`<rect x="${x(b)-1.5}" y="${y+2}" width="3" height="24" fill="#33302E"/>`;
+    const lab=over?"+"+((sp/b-1)*100).toFixed(1)+T("% over"):pc(b?sp/b:0)+T(" spent");
+    s+=`<text x="${W-vw+8}" y="${y+18}" font-size="13" fill="${over?"#A63A2E":"#2B2523"}" font-family="Cambria,Georgia,serif" font-weight="700">${lab}</text>`;
+  });
+  s+="</svg>";document.getElementById("bullet").innerHTML=s;
+}
+function drawScurve(r){
+  const W=1100,H=230,p={l:50,r:14,t:12,b:26},n=r.months.length;
+  const ahead=(function(){const ms=monthsBetween(r.months[n-1],String(NOTES.plannedEnd).trim());return Math.max(ms.length-1,0)})();
+  const endIdx=Math.max(n-1,n-1+ahead);
+  const cb=r.conBudget;const mx=Math.max(cb,r.cum[n-1])/1e6*1.05;
+  const X=i=>p.l+i/endIdx*(W-p.l-p.r),Y=v=>p.t+(1-v/mx)*(H-p.t-p.b);
+  let s=`<svg viewBox="0 0 ${W} ${H}" aria-label="Cumulative spend S-curve versus straight-line plan">`;
+  for(let k=0;k<=4;k++){const v=mx*k/4,y=Y(v);s+=`<line x1="${p.l}" y1="${y}" x2="${W-p.r}" y2="${y}" stroke="#E2DFD0"/><text x="${p.l-6}" y="${y+4}" font-size="11" fill="#7A736E" text-anchor="end">${v.toFixed(1)}</text>`}
+  s+=`<line x1="${X(0)}" y1="${Y(0)}" x2="${X(endIdx)}" y2="${Y(cb/1e6)}" stroke="#33302E" stroke-width="1.4" stroke-dasharray="5 4"/>`;
+  s+=`<path d="M${r.cum.map((v,i)=>X(i)+","+Y(v/1e6)).join(" L")}" fill="none" stroke="#B85042" stroke-width="2.5"/>`;
+  s+=`<line x1="${p.l}" y1="${Y(cb/1e6)}" x2="${W-p.r}" y2="${Y(cb/1e6)}" stroke="#7D9471" stroke-width="1"/><text x="${W-p.r}" y="${Y(cb/1e6)-4}" font-size="11" fill="#5C7F52" text-anchor="end">${T("construction budget ")}${M(cb)}m</text>`;
+  const top=[...r.capM.keys()].sort((a,b)=>r.capM[b]-r.capM[a]).slice(0,3);
+  top.forEach((i,k)=>{const cx=X(i),cy=Y(r.cum[i]/1e6),ly=cy-14-k*15;s+=`<circle cx="${cx}" cy="${cy}" r="4" fill="#33302E"/><line x1="${cx}" y1="${cy-5}" x2="${cx}" y2="${ly+3}" stroke="#7A736E" stroke-width=".8"/><text x="${cx+5}" y="${ly}" font-size="11" fill="#33302E">${r.months[i]} · +${K(r.capM[i])}k</text>`});
+  for(let i=0;i<=endIdx;i+=6){const lab=i<n?r.months[i]:"";if(lab)s+=`<text x="${X(i)}" y="${H-8}" font-size="11" fill="#2B2523" text-anchor="middle">${lab}</text>`}
+  s+=`<text x="${X(endIdx)}" y="${H-8}" font-size="11" fill="#7A736E" text-anchor="end">${NOTES.plannedEnd} plan</text></svg>`;
+  document.getElementById("scurve").innerHTML=s;
+  const planNow=cb*(n-1)/endIdx;
+  document.getElementById("scNote").textContent=T("Terracotta = cumulative actual (")+M(r.cum[n-1])+T("m). Dashed = straight-line plan to ")+NOTES.plannedEnd+T(", which would be at ")+M(planNow)+T("m today — actual is ")+T(r.cum[n-1]>=planNow?"ahead of":"behind")+T(" the line by ")+M(Math.abs(r.cum[n-1]-planNow))+T("m. Dots mark the three heaviest months.");
+}
+function squarify(items,x,y,w,h,out){
+  if(!items.length)return;const tot=items.reduce((a,i)=>a+i.v,0);
+  if(items.length===1){out.push({...items[0],x,y,w,h});return}
+  let acc=0,i=0;const horiz=w>=h;
+  while(i<items.length&&acc<tot/2){acc+=items[i].v;i++}
+  if(i===items.length)i--;if(i===0)i=1;
+  const a=items.slice(0,i),b=items.slice(i),f=a.reduce((s,q)=>s+q.v,0)/tot;
+  if(horiz){squarify(a,x,y,w*f,h,out);squarify(b,x+w*f,y,w*(1-f),h,out)}else{squarify(a,x,y,w,h*f,out);squarify(b,x,y+h*f,w,h*(1-f),out)}
+}
+function drawTreemap(r){
+  const W=1100,H=360;const items=SECS.filter(s=>r.budget[s]>0).map(s=>({k:s,v:r.budget[s],sp:r.spent[s]})).sort((a,b)=>b.v-a.v);
+  const out=[];squarify(items,0,0,W,H,out);
+  let s=`<svg viewBox="0 0 ${W} ${H}" aria-label="Treemap of approved budget by section coloured by consumption">`;
+  out.forEach(t=>{const ratio=Math.min(t.sp/t.v,1.2),over=t.sp>t.v;
+    const a=0.15+Math.min(ratio,1)*0.8;
+    s+=`<g style="cursor:pointer" onclick="secFilter='${t.k}';drawBVA(window._r)"><rect x="${t.x+2}" y="${t.y+2}" width="${t.w-4}" height="${t.h-4}" fill="rgba(184,80,66,${a})" stroke="${over?"#A63A2E":"#fff"}" stroke-width="${over?3:2}" rx="3"/>
+      <text x="${t.x+12}" y="${t.y+24}" font-size="13" font-weight="700" fill="${a>0.6?"#fff":"#2B2523"}">${t.k}</text>
+      <text x="${t.x+12}" y="${t.y+42}" font-size="12" fill="${a>0.6?"#fff":"#2B2523"}">${D(t.v)} · ${pc(t.sp/t.v)} spent</text></g>`});
+  s+="</svg>";document.getElementById("treemap").innerHTML=s;
+}
+function drawBVA(r){
+  const row=(cls,l,b,sp)=>{const rem=b-sp;return `<tr class="${cls}"><td>${l}</td><td class="n">${fmt(b)}</td><td class="n">${fmt(sp)}</td><td class="n" style="color:${rem<0?"var(--red)":"inherit"}">${fmt(rem)}</td><td class="n">${b?pc(sp/b):"—"}</td></tr>`};
+  let h=`<tr><th>${T("Section / lot / line ")}${secFilter!=="all"?`<a href="#" onclick="secFilter='all';drawBVA(window._r);return false" style="color:var(--terra);font-weight:400">${T("· show all")}</a>`:""}</th><th class="n">${T("Budget")}</th><th class="n">${T("Spent")}</th><th class="n">${T("Remaining")}</th><th class="n">%</th></tr>`;
+  DATA.budget.filter(b=>secFilter==="all"||b.sec===secFilter).forEach(b=>{
+    const bt=b.lots.reduce((a,l)=>a+l.lines.reduce((x,y)=>x+y[1],0),0);
+    h+=row("sec",(b.code?b.code+" · ":"")+b.sec+(b.contingency?T(" — consumed by overruns of the other sections"):""),bt,r.spent[b.sec]);
+    b.lots.forEach(l=>{const lt=l.lines.reduce((x,y)=>x+y[1],0);
+      // sample data carries spend at section level only; lots show budget structure and a pro-rata estimate (live data allocates by column O)
+      const k=b.sec+"|"+l.lot;const mapped=Object.keys(r.lotSpent).some(x=>x.startsWith(b.sec+"|"));
+      const est=mapped?(r.lotSpent[k]||0):(bt?r.spent[b.sec]*lt/bt:0);
+      h+=row("lot",l.lot+(mapped?"":T(" (pro-rata)")),lt,est);
+      l.lines.forEach(([n,v])=>h+=row("line",n,v,lt?est*v/lt:0));
+    });
+    const allocated=b.lots.reduce((a,l)=>a+(r.lotSpent[b.sec+"|"+l.lot]||0),0);
+    if(Object.keys(r.lotSpent).some(x=>x.startsWith(b.sec+"|"))&&Math.abs(r.spent[b.sec]-allocated)>1)h+=row("lot",T("Non alloué à un lot (col O vide ou non reconnue)"),0,r.spent[b.sec]-allocated);
+  });
+  h+=row("tot",T("Total"),r.budgetTotal,r.totSpent);
+  document.getElementById("bva").innerHTML=h;
+}
+function drawSankey(r){
+  const W=1100,H=330,colW=190,gap=6;
+  const src=[[T("CCA associés (9.1)"),r.fundCCA],[T("Prêts société (9.2)"),r.fundSte]].filter(x=>x[1]>0);
+  let uses=[...SECS.filter(s=>s!=="IMPREVUS").map(s=>[s,r.spent[s]]),[T("Other assets (5.x)"),r.other],[T("To classify"),r.toclassAmt],[T("Operating & bank"),r.opex]].filter(x=>x[1]>0);
+  const bal=src.reduce((a,x)=>a+x[1],0)-uses.reduce((a,x)=>a+x[1],0);
+  if(bal>0)uses.push([T("Cash on hand"),bal]);else src.push([T("Balancing item"),-bal]);
+  const totS=src.reduce((a,x)=>a+x[1],0),totU=uses.reduce((a,x)=>a+x[1],0),tot=Math.max(totS,totU);
+  const sc=(H-gap*(Math.max(src.length,uses.length)+1))/tot;
+  let s=`<svg viewBox="0 0 ${W} ${H}" aria-label="Sankey of funding sources to uses">`;
+  let y=gap;const sPos=src.map(([n,v])=>{const o={n,v,y,h:v*sc};y+=v*sc+gap;return o});
+  y=gap;const uPos=uses.map(([n,v])=>{const o={n,v,y,h:v*sc};y+=v*sc+gap;return o});
+  const x0=colW,x1=W-colW;
+  // flows: allocate each use across sources proportionally
+  const cur=sPos.map(p=>p.y);
+  uPos.forEach(u=>{let uy=u.y;sPos.forEach((p,i)=>{const h=u.h*p.v/totS;if(h<0.5)return;const y0=cur[i],y1=uy;
+    s+=`<path d="M${x0},${y0} C${(x0+x1)/2},${y0} ${(x0+x1)/2},${y1} ${x1},${y1} L${x1},${y1+h} C${(x0+x1)/2},${y1+h} ${(x0+x1)/2},${y0+h} ${x0},${y0+h} Z" fill="rgba(184,80,66,0.18)"/>`;cur[i]+=h;uy+=h})});
+  sPos.forEach(p=>s+=`<rect x="${x0-14}" y="${p.y}" width="14" height="${p.h}" fill="#7D9471"/><text x="${x0-20}" y="${p.y+p.h/2+4}" font-size="12" text-anchor="end" fill="#2B2523">${p.n} · ${M(p.v)}m</text>`);
+  uPos.forEach(p=>s+=`<rect x="${x1}" y="${p.y}" width="14" height="${p.h}" fill="${p.n===T("Cash on hand")?"#7D9471":"#B85042"}"/><text x="${x1+20}" y="${p.y+p.h/2+4}" font-size="12" fill="#2B2523">${p.n} · ${M(p.v)}m</text>`);
+  s+="</svg>";document.getElementById("sankey").innerHTML=s;
+}
+function drawFlows(r){
+  const W=1100,H=230,p={l:46,r:8,t:12,b:24},n=r.months.length,bw=(W-p.l-p.r)/n;
+  const mx=Math.max(...r.inM,...r.outM)/1e6||1;const Y=v=>p.t+(1-v/mx)*(H-p.t-p.b);
+  let s=`<svg viewBox="0 0 ${W} ${H}" aria-label="Monthly inflows and outflows">`;
+  for(let k=0;k<=3;k++){const v=mx*k/3;s+=`<line x1="${p.l}" y1="${Y(v)}" x2="${W-p.r}" y2="${Y(v)}" stroke="#E2DFD0"/><text x="${p.l-5}" y="${Y(v)+4}" font-size="10" fill="#7A736E" text-anchor="end">${v.toFixed(1)}</text>`}
+  r.months.forEach((m,i)=>{const x=p.l+i*bw;s+=`<rect x="${x+bw*0.1}" y="${Y(r.inM[i]/1e6)}" width="${bw*0.38}" height="${Y(0)-Y(r.inM[i]/1e6)}" fill="#7D9471"/><rect x="${x+bw*0.52}" y="${Y(r.outM[i]/1e6)}" width="${bw*0.38}" height="${Y(0)-Y(r.outM[i]/1e6)}" fill="#B85042"/>`;
+    if(i%12===0)s+=`<text x="${x}" y="${H-8}" font-size="10" fill="#2B2523">${m.slice(0,4)}</text>`});
+  s+=`<text x="${W-p.r}" y="${p.t+8}" font-size="10" text-anchor="end" fill="#5C7F52">${T("■ inflow")}</text><text x="${W-p.r-90}" y="${p.t+8}" font-size="10" text-anchor="end" fill="#B85042">${T("■ outflow")}</text></svg>`;
+  document.getElementById("flows").innerHTML=s;
+}
+function drawCptyIn(r){
+  const items=Object.entries(r.cptyIn).filter(([n,v])=>v>=1000).sort((a,b)=>b[1]-a[1]).slice(0,10);const mx=Math.max(...items.map(x=>Math.abs(x[1])),1);
+  const tot=items.reduce((a,x)=>a+Math.max(x[1],0),0);
+  document.getElementById("cptyIn").innerHTML=items.map(([n,v])=>`<div class="row"><div>${n}</div><div><div class="bar" style="width:${Math.max(2,Math.abs(v)/mx*100)}%;background:${v>=0?"var(--sage)":"var(--red)"}"></div></div><div class="val" style="color:${v<0?"var(--red)":"var(--ink)"}">${v<0?"−":""}${Math.abs(v)>=1e6?M(Math.abs(v))+"m":K(Math.abs(v))+"k"}</div></div>`).join("")+
+    `<div class="row" style="margin-top:6px;border-top:1px solid var(--line);padding-top:6px"><div><b>${T("Net funding, top ")}${items.length}</b></div><div></div><div class="val">${M(tot)}m</div></div>`;
+}
+function drawCpty(r){
+  const items=Object.entries(r.cpty).sort((a,b)=>b[1]-a[1]).slice(0,10);const mx=items[0]?items[0][1]:1;
+  document.getElementById("cpty").innerHTML=items.map(([n,v])=>`<div class="row"><div>${n}</div><div><div class="bar" style="width:${Math.max(2,v/mx*100)}%;background:var(--terra)"></div></div><div class="val">${K(v)}k</div></div>`).join("");
+}
+function drawHeat(r){
+  const qs=[];const qi={};r.months.forEach((m,i)=>{const q=m.slice(0,4)+" Q"+(Math.floor((+m.slice(5)-1)/3)+1);if(!(q in qi)){qi[q]=qs.length;qs.push(q)}});
+  const grid=SECS.map(s=>qs.map(()=>0));r.months.forEach((m,i)=>{const q=qi[m.slice(0,4)+" Q"+(Math.floor((+m.slice(5)-1)/3)+1)];SECS.forEach((s,j)=>grid[j][q]+=r.bySecMonth[s][i])});
+  const mx=Math.max(...grid.flat())||1;
+  let h="<tr><th></th>"+qs.map(q=>`<th>${q.replace(" ","<br>")}</th>`).join("")+"</tr>";
+  SECS.forEach((s,j)=>{if(s==="FONCIER"||s==="IMPREVUS")return;h+=`<tr><td class="rowh">${s}</td>`+grid[j].map(v=>{const t=v/mx;return `<td style="background:${v>0?`rgba(184,80,66,${0.10+t*0.7})`:"#F6F4EC"};color:${t>0.55?"#fff":"#2B2523"}">${v>0?K(v):""}</td>`}).join("")+"</tr>"});
+  document.getElementById("heat").innerHTML=h;
+}
+function drawSmalls(r){
+  const mx=Math.max(...SECS.filter(s=>s!=="FONCIER"&&s!=="IMPREVUS").flatMap(s=>r.bySecMonth[s]))||1;const W=340,H=90,n=r.months.length;
+  document.getElementById("smalls").innerHTML=SECS.filter(s=>s!=="FONCIER"&&s!=="IMPREVUS").map(s=>{const pts=r.bySecMonth[s].map((v,i)=>`${i/(n-1)*W},${H-4-(v/mx)*(H-14)}`);
+    return `<div><div class="t">${s} <span style="color:var(--muted);font-weight:400">· ${M(r.spent[s])}m</span></div><svg viewBox="0 0 ${W} ${H}" aria-label="Monthly spend ${s}"><path d="M0,${H-4} L${pts.join(" L")} L${W},${H-4} Z" fill="rgba(184,80,66,0.25)"/><path d="M${pts.join(" L")}" fill="none" stroke="#B85042" stroke-width="1.5"/><line x1="0" y1="${H-4}" x2="${W}" y2="${H-4}" stroke="#DDD8CC"/></svg></div>`}).join("");
+}
+function renderTx(){
+  const r=window._r;if(!r)return;const q=(document.getElementById("q").value||"").toLowerCase(),c=document.getElementById("fCat").value;
+  const rows=r.tx.filter(t=>(c==="all"||t.cat1===c)&&(!q||(t.desig+" "+t.cpty+" "+t.info+" "+t.cat3).toLowerCase().includes(q)));
+  let tin=0,tout=0;
+  let h=`<tr><th>${T("Date")}</th><th>${T("Designation")}</th><th>${T("Category")}</th><th>${T("Counterparty")}</th><th class="n">${T("Inflow")}</th><th class="n">${T("Outflow")}</th></tr>`;
+  rows.slice(0,400).forEach(t=>{tin+=t.inflow;tout+=t.outflow;h+=`<tr><td>${t.date}</td><td>${t.desig}</td><td>${t.cat3||'<span style="color:var(--red)">${T("unclassified")}</span>'}</td><td>${t.cpty}</td><td class="n" style="color:var(--green)">${t.inflow?fmt(t.inflow):""}</td><td class="n">${t.outflow?fmt(t.outflow):""}</td></tr>`});
+  h+=`<tr class="tot"><td colspan="4">${T("Total (")}${rows.length}${T(" lines)")}</td><td class="n">${fmt(rows.reduce((a,t)=>a+t.inflow,0))}</td><td class="n">${fmt(rows.reduce((a,t)=>a+t.outflow,0))}</td></tr>`;
+  document.getElementById("txt").innerHTML=h;
+  document.getElementById("txNote").textContent=rows.length>400?T("Showing the first 400 of ")+rows.length+T("; totals cover all filtered lines."):"";
+}
+
+/* ================= SYNC ================= */
+async function sync(){
+  const url=document.getElementById("endpoint").value.trim();const dot=document.getElementById("dot"),txt=document.getElementById("syncTxt");
+  if(!url){dot.className="dot sample";txt.textContent=T("Snapshot · 4 Sep 2026 · 622 lines");DATA.transactions=sampleTx();DATA.meta.source="sample";render();return}
+  dot.className="dot syncing";txt.textContent=T("Syncing…");
+  try{const res=await fetch(url,{cache:"no-store",credentials:"omit"});const j=await res.json();
+    if(!j.transactions||!j.budget)throw new Error("payload");
+    const oldTotal=window._r?window._r.budgetTotal:null;
+    DATA=j;DATA.meta=DATA.meta||{};DATA.meta.source="live";SECS=DATA.budget.map(b=>b.sec);
+    try{localStorage.setItem("vdija.cache.v1",JSON.stringify(j))}catch(e){}
+    if(j.notes)NOTES=Object.assign(NOTES,j.notes);
+    render();
+    if(oldTotal&&Math.abs(oldTotal-window._r.budgetTotal)>1){const b=document.getElementById("banner");b.style.display="block";b.textContent=T("Approved budget changed: ")+D(oldTotal)+" → "+D(window._r.budgetTotal)+"."}
+    dot.className="dot";txt.textContent=T("Live · ")+new Date().toLocaleTimeString();
+  }catch(e){dot.className="dot stale";let c=null;try{c=JSON.parse(localStorage.getItem("vdija.cache.v1"))}catch(x){}
+    if(c&&c.transactions){DATA=c;DATA.meta=DATA.meta||{};DATA.meta.source="live";render();txt.textContent=T("Stale · cached ")+(c.meta&&c.meta.generatedAt?new Date(c.meta.generatedAt).toLocaleString():"")}else txt.textContent=T("Endpoint unreachable · showing embedded snapshot");}
+}
+setInterval(()=>{if(document.getElementById("endpoint").value.trim())sync()},POLL_MS);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&document.getElementById("endpoint").value.trim())sync()});
+
+/* ================= EDIT / PASSWORD ================= */
+let fails=0,lockUntil=0;
+async function sha(s){if(crypto&&crypto.subtle){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;return String(h)}
+let pwHash=PW_HASH_SNAPSHOT;
+function toggleEdit(){if(document.body.classList.contains("editing"))cancelEdit();else{document.getElementById("modal").classList.add("on");document.getElementById("pw").value="";document.getElementById("pwErr").textContent="";setTimeout(()=>document.getElementById("pw").focus(),50)}}
+function closeModal(){document.getElementById("modal").classList.remove("on")}
+async function checkPw(){
+  if(Date.now()<lockUntil){document.getElementById("pwErr").textContent=T("Locked — try again in ")+Math.ceil((lockUntil-Date.now())/1000)+" s";return}
+  const h=await sha(document.getElementById("pw").value);
+  if(h===pwHash){fails=0;closeModal();document.body.classList.add("editing");document.querySelectorAll(".editable").forEach(e=>e.contentEditable="true");document.getElementById("editBtn").textContent=T("Editing 🔓")}
+  else{fails++;document.getElementById("pwErr").textContent=T("Wrong password")+(fails>=3?T(" — locked for 60 s"):"");if(fails>=3){lockUntil=Date.now()+60000;fails=0}}
+}
+function saveNotes(){document.querySelectorAll(".editable").forEach(e=>NOTES[e.dataset.note]=e.textContent.trim());try{localStorage.setItem("vdija.notes",JSON.stringify(NOTES))}catch(e){}
+  const url=document.getElementById("endpoint").value.trim();
+  if(url){fetch(url,{method:"POST",credentials:"omit",body:JSON.stringify({action:"saveNotes",notes:NOTES,pwHash})}).catch(()=>{})}
+  cancelEdit();render();}
+function cancelEdit(){document.body.classList.remove("editing");document.querySelectorAll(".editable").forEach(e=>e.contentEditable="false");document.getElementById("editBtn").textContent=T("Edit 🔒");render()}
+
+/* ================= EXPORT ================= */
+function exportJSON(){const a=document.createElement("a");a.href="data:application/json;charset=utf-8,"+encodeURIComponent(JSON.stringify({meta:DATA.meta,budget:DATA.budget,transactions:window._r.tx,notes:NOTES},null,1));a.download="vdija_snapshot.json";a.click()}
+function copySnapshot(){const r=window._r;const t=`Villa Dija — ${new Date().toLocaleDateString()}\nBudget ${D(r.budgetTotal)} · Spent ${D(r.totSpent)} (${pc(r.totSpent/r.budgetTotal)}) · Remaining ${D(r.remaining)}\nOverruns ${D(r.overruns)} vs contingency ${D(r.budget["IMPREVUS"]||0)}\n`+SECS.map(s=>`${s}: ${D(r.spent[s])} / ${D(r.budget[s])} (${r.spent[s]>r.budget[s]?"+"+((r.spent[s]/r.budget[s]-1)*100).toFixed(1)+"% over":pc(r.budget[s]?r.spent[s]/r.budget[s]:0)})`).join("\n");navigator.clipboard&&navigator.clipboard.writeText(t).then(()=>{const b=document.getElementById("banner");b.style.display="block";b.textContent=T("KPI snapshot copied to the clipboard.");setTimeout(()=>b.style.display="none",2500)}).catch(()=>{})}
+function exportCSV(){const r=window._r;const rows=[["date","designation","cat1","cat2","cat3","counterparty","info","inflow","outflow"],...r.tx.map(t=>[t.date,t.desig,t.cat1,t.cat2,t.cat3,t.cpty,t.info,t.inflow,t.outflow])];
+  const csv=rows.map(x=>x.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(csv);a.download="vdija_transactions.csv";a.click()}
+
+/* ================= INIT ================= */
+try{const ep=localStorage.getItem("vdija.endpoint");if(ep!==null)document.getElementById("endpoint").value=ep}catch(e){}
+if(document.getElementById("endpoint").value.trim())setTimeout(sync,300);
+document.getElementById("endpoint").addEventListener("change",()=>{try{localStorage.setItem("vdija.endpoint",document.getElementById("endpoint").value.trim())}catch(e){}});
+const TABS=[["overview","Overview"],["budget","Budget vs actual"],["cash","Cash & funding"],["timeline","Timeline"],["tx","Transactions"]];
+document.getElementById("nav").innerHTML=TABS.map(([k,l],i)=>`<button class="${i===0?"on":""}" data-tab="${k}" onclick="showTab('${k}')">${T(l)}</button>`).join("");
+function showTab(k){document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("on",t.id==="tab-"+k));document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.tab===k))}
+const fy=document.getElementById("fYear");for(let y=2022;y<=new Date().getFullYear();y++){const o=document.createElement("option");o.value=y;o.textContent=y;fy.appendChild(o)}
+const fs=document.getElementById("fSec");SECS.forEach(s=>{const o=document.createElement("option");o.value=s;o.textContent=s;fs.appendChild(o)});
+fs.addEventListener("change",()=>{secFilter=fs.value;drawBVA(window._r)});
+render();collectI18n();if(LANG!=="en")applyLang();if(!document.getElementById("endpoint").value.trim())document.getElementById("syncTxt").textContent=T("Snapshot · 4 Sep 2026 · 622 lines");
+</script>
+</body>
+</html>
